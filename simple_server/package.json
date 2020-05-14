@@ -1,0 +1,14 @@
+{
+  "name": "simple_sever",
+  "version": "1.0.0",
+  "description": "'A simple Server'",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yasuhiro okada",
+  "license": "ISC",
+  "dependencies": {
+    "http-status-codes": "^1.4.0"
+  }
+}
