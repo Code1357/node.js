@@ -6,8 +6,8 @@ const http = require('http');
 const httpStatus = require('http-status-codes');
 const app = http.createServer();
 
-/* // リクエストを監視するリスナ on()はクライアントからデータを受け取ると発生するイベント
-app.on('request',(req, res) => {
+// リクエストを監視するリスナ on()はクライアントからデータを受け取ると発生するイベント
+app.on('request',(req, res) => { // 'reqest'の文字列はなんでも良いわけではない
   // レスポンス準備（クライアントに送り返す）
   res.writeHead(httpStatus.OK, { 
     'Content-Type':'text/html; charset=utf-8'
@@ -23,48 +23,21 @@ app.on('request',(req, res) => {
 // http://localhost:3000/
 app.listen(port);
 
-console.log(`サーバが起動してポート ${port} を監視しています`) */
+// ログに出力
+console.log(`サーバが起動してポート ${port} を監視しています`);
 
 
- // JavaScriptオブジェクトを文字列に変換する
-const getJSONString = obj => {
-  return JSON.stringify(obj, null, 2);
-}
+/* 
+onメソッドは、様々な関数をイベント登録を行うことが出来るものです。 
+例えば、 
+server.on('request', doRequest); 
+（requestがイベント名です。doRequestが関数です。） 
 
-app.on('request',(req,res) => {
-  // リクエストを監視
-  let body = [] // チャンクを格納する配列を作成
-  req.on('data',(bodyData) => {
-    // そのデータを別のコールバック関数で処理
-    body.push(bodyData); // 受信したデーtをbody配列に入れる
-  });
-  req.on('end',() => { // データ転送の完了時に実行するコード
-    body = Buffer.concat(body).toString(); // body配列を文字列テキストに変換
-    // リクエストの内容をコンソールにロギングする
-    console.log(`Reqest Body Contents: ${body}`);
-});
-
-console.log(`Method: ${getJSONString(req.method)}`); 
-console.log(`URL: ${getJSONString(req.url)}`);
-console.log(`Headers: $getJSONString(req.headers)}`);
-
-res.writeHead(httpStatus.OK, {
-  'Content-Type':'text/html'
-});
-
-
-// 「このメッセージが画面に現れます」
-let resMessage = '<h1>This will show on the screen.</h1>';
-res.end(resMessage);
-});
-
-app.listen(port);
-// 「サーバが起動しました。監視しているポート番号は:」
-console.log(`The server has started and is listening on port number: ${port}`);
-
-
-
-
-
-
+第一引数で指定したイベント発生後、第二引数の関数を実行するといった感じです。 */
+/* 
+イベントハンドラ：イベントが発生した時に呼び出される処理
+on(event, listener) 
+　-eventには、イベント名を示す文字列が入る
+　-listenerがイベントハンドラの箇所であり、関数オブジェクトが入る
+*/
 
