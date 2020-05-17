@@ -1,0 +1,14 @@
+{
+  "name": "serve_html",
+  "version": "1.0.0",
+  "description": "simple HTML",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yasuhiro okada",
+  "license": "ISC",
+  "dependencies": {
+    "http-status-codes": "^1.4.0"
+  }
+}
