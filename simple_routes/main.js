@@ -10,18 +10,16 @@ const routeResponseMap = {
   '/contact': '<h1>Contact/お問い合わせ</h1>',
   '/about': '<h1>Learn More About Us/私たちについて知っていただきたい事</h1>',
   '/hello': '<h1>Say hello by emailing us <a href="mailto:mailing@gmail.com">here</a>/当方へのご連絡は、<a href="mailto:mailing@gmail.com">ここ</a>にメールを送信してださい</h1>',
-  '/error': '<h1>Soryy,thh page yuou looking for is not here/ごめんなさい。あなたが探しているページは、ここにはありません</h1>' // ここにerror.404ステータスコードでレスポンスを記述
+  '/error': `NOT FOUND ${httpStatus.NOT_FOUND} <br>Soryy,thh page yuou looking for is not here/ごめんなさい。あなたが探しているページは、ここにはありません` // ここにerror.404ステータスコードでレスポンスを記述
 };　           
-　
-
 
 const app = http.createServer((req, res) => {　// req:リクエスト情報を受けている
-  res.writeHead(httpStatus.OK, httpStatus.NOT_FOUND, {
+  res.writeHead(httpStatus.OK, {
     'Content-Type': 'text/html; charset=utf-8'
   });
 
   //　リクエストの経路がマップで定義されているかチェック
-  if (routeResponseMap[req.url]) { // リクエストのURLが○○だったら
+  if (routeResponseMap[req.url]) { // リクエストのURLが○○だったら,[req.url]:リクエストのURLを参照してtrueであれば
     res.end(routeResponseMap[req.url]); // リクエストのURLに基づいたページを返す
   } else {
     // デフォルトのHTMLでレスポンス
