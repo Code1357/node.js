@@ -25,11 +25,13 @@ const server = http.createServer((req, res) => {
     // リクエストのURLを補完してfsでファイルを探す
     fs.readFile(viewUrl, (error, data) => {
         if (error) {
-            res.writeHead(httpStatus.NOT_FOUND);
+            res.writeHead(httpStatus.NOT_FOUND, {
+                'Content-Type': 'text/html; charset=utf-8'
+            });
             res.write('<h1>FILE NOT FOUND/ファイルはありません</h1>'); // なぜか文字化けする
         } else {
             res.writeHead(httpStatus.OK, {
-                'Content-Type': 'text/html: charset=uft-8'
+                'Content-Type': 'text/html; charset=utf-8'
             });
             res.write(data);
         }
