@@ -3,31 +3,9 @@
 const port = 3000;
 const http = require('http');
 const httpStatus = require('http-status-codes');
-const router = require('router'); // 作成したモジュール
-const fs = require('fs'); // 様々な 『ファイル』 を供給するために必要
 
-const plainTextContentType = {
-    'Content-Type': 'text/plain; charset=utf-8'
-}
-const htmlTextContentType = {
-    'Content-Type': 'text/html; charset=utf-8'
-}
-
-// 自作関数
-costomReadFile = (file, res) => {
-    fs.readFile(`./${file}`, (errors, data) => {
-        if(errors) {
-            console.log('Error reading the file/エラー　ファイルを読み込めません');
-        }
-        res.end(data);
-    });
-};
-
-// getとpostで経路を登録する
-
-
-
-
+// fsモジュールをインポート(Node.jsのコアモジュール)
+const fs = require('fs'); // 様々なファイル操作のメソッドが使えるようになる
 
 // エラー処理関数を作成/以下コードの内容では、該当しない場合は、このエラー関数をresする複線を貼っている
 const sendErrorResponse = (res) => {
