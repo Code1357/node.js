@@ -8,14 +8,17 @@ const hetmlContentType = {
 // 'GET'：プロパティ名,『'' or ""』でプロパティ名は括る方がよいが状況によっては省略可能
 const routes = {
   'GET':{
-    '/info':(req,res) => {
+    '/info':(req, res) => {
       res.writeHead(httpStatus.OK, {
         'Content-Type': 'text/plain; charset=utf-8'
-      })
+      });
+      console.log(req.method);
+      console.log(req.url);
+      console.log(req.headers);
       res.end('Welcom to the Info Page!/情報のページへようこそ！');
     }
   },
-  'POST':{} //　疑問：POSTだった場合、hederに情報が乗るとよくないので、あえて記述せずにtry...catchで処理できるようにしているのかな？？？？？
+  'POST':{} //　疑問:ここでPOST空で設置する意味は？
 };
 
 // 経路のコールバック関数を処理するhandle関数を作る
