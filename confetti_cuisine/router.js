@@ -13,17 +13,28 @@ const routes = {
 exports.handle = (req, res) => {
   try { // 予期せぬエラーへの対処(try...)
     routes[req.method][req.url](req, res);
+
+console.log(req.method); // GETを取得している
+
   } catch (e) {
-    res.weiteHead(htttpStatus.OK, contentTypes.html);
-    utils.getFile('views/error.html', res);
+    res.writeHead(htttpStatus.OK, contentTypes.html);
+    utils.getFile('views/error.html' ,res);
   }
 };
 
 // 経路関数を関連づけるgetとpostの関数を作成
 exports.get = (url, action) => {
   routes['GET'][url] = action;
+
+// console.log(url);
+// console.log(action);
+
 };
 
 exports.post = (url, action) => {
   routes['POST'][url] = action;
+
+console.log(url);
+// console.log(action);
+
 };

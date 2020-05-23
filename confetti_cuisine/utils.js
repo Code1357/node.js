@@ -7,11 +7,18 @@ const contentTypes = require('./contentTypes');
 module.exports = {
   getFile: (file, res) => {
     fs.readFile(`./${file}`, (error, data) => { // ファイル読み込み, ./${file}：変数(パス)であり引数
+
+// console.log(file);
+
       if (error) {
         res.writeHead(httpStatus.INTERNAL_SERVER_ERROR, contentTypes.html); // ステータスコード500,server error
         res.end('There was an error serving content! / コンテンツの提供にエラーが発生しました');
       }
       res.end(data); // ifに該当してもしなくてもdataを返す
+
+// console.log(error);
+// console.log(data);
+
     });
   }
 };
