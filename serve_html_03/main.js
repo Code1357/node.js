@@ -31,9 +31,9 @@ router.get('/', (req, res) => {
 
 router.get('/index.html', (req, res) => {
     res.writeHead(httpStatusCodes.OK, htmlContentType);
-    console.log(req.method);
+  /*   console.log(req.method);
     console.log(req.url);
-    console.log(req.headers);
+    console.log(req.headers); */
     customReadFile('views/index.html', res);
 });
 
