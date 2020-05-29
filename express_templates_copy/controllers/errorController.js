@@ -22,11 +22,14 @@ exports.respondNoResourceFound = (req, res) => {
   res.sendFile('./public/404.html', {root: './'}); // res.sendFile:指定されたパスにファイルを転送,rootがない場合は絶対パスでなければならない
 };
 
-
 // すべてのエラーをキャッチし、ステータスコード500でレスポンス,500：内部サーバーエラー
-exports.respondInternalError = (error, req, res, next) => {
+/* exports.respondInternalError = (error, req, res, next) => {
   let errorCode = httpStatus.INTERNAL_SERVER_ERROR;
   console.log(`ERROR occurred: ${error.stack}`);
   res.status(errorCode);
-  res.send(`${errorCode} | Sorry, our application is experiencing a problem!/申し訳ありませんが、私たちのアプリケーションに問題が発生しています。`)
+  res.send(`${errorCode} | Sorry, our application is experiencing a problem!/申し訳ありませんが、私たちのアプリケーションに問題が発生しています。`);
+}; */
+
+exports.respondInternalError = (req, res) => {
+  res.sendFile('./public/500.html', {root: './'});
 };
