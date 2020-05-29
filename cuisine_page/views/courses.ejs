@@ -1,0 +1,6 @@
+<h1>料理のコース</h1>
+<%# ビュー内でコースの配列をループする %> 
+<% offeredCourses.forEach(courses => { %> <%# // forEach: 配列を順に取り出す %> 
+<h5> <%= courses.title %> </h5> 
+<span>$ <%= courses.cost %> </span>
+<% }); %>
