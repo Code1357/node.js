@@ -15,6 +15,7 @@ app.use(express.static('public'));
 
 // homeControllerインポート
 const homeController = require('./controllers/homeController');
+const errorControllers = require('./controllers/errorController');
 
 // HTTPリクエストのバッファルトリームをでコードする（bodyの解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
 app.use(
@@ -30,9 +31,13 @@ app.get('/', (req, res) => {
 });
 
 // リクエストのパスに応じて対応する経路
-app.get('/courses', homeController.showCoures);
+app.get('/courses', homeController.showCourses);
 app.get('/contact', homeController.showSignUp);
 app.post('/thanks', homeController.postedSignUpFrom);
+
+// Errorの経路
+app.use(errorControllers.pageNotFoundError);
+app.use(errorControllers.internalServerError);
 
 // ポートの監視
 app.listen(app.get('port'), () => {

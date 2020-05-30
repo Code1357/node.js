@@ -1,6 +1,8 @@
-<h1>料理のコース</h1>
+<h4>メニュー(オブジェクト内のデータを変更するだけで、メニュー変更できる)</h4>
 <%# ビュー内でコースの配列をループする %> 
 <% offeredCourses.forEach(courses => { %> <%# // forEach: 配列を順に取り出す %> 
-<h5> <%= courses.title %> </h5> 
-<span>$ <%= courses.cost %> </span>
+<h5> <%= courses.title %> </h5>
+<span> <%= courses.cost %> 円 </span>
 <% }); %>
+
+
