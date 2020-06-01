@@ -5,12 +5,14 @@ mongoose(パッケージ)を使った操作
 https://mongoosejs.com
 https://mongoosejs.com/docs/connections.html
 https://mongoosejs.com/docs/schematypes.html
+https://mongoosejs.com/docs/guide.html
+https://mongoosejs.com/docs/models.html
 */
 // mongooseモジュールを読み込み
 const mongoose = require('mongoose');
 // データベースへの接続を設定
 mongoose.connect('mongodb://localhost:27017/recipe_db',
-{useNewUrlParser: true, useUnifiedTopology: true}
+  { useNewUrlParser: true, useUnifiedTopology: true }
 );
 // データベースをdb変数に代入
 const db = mongoose.connection;
@@ -19,11 +21,43 @@ db.once('open', () => {
   console.log('mongooseを使ってMongoDBに接続できました！')
 });
 
-// mongoose.Schemaを使って新しいスキーマを作る,スキーマ:クラスのようなイメージで設計図となる部分
-const subscriberSchema = mongoose.Schema({
-  name: String, // プロパティ: データ型
-  email: String,
-  zipCode: Number
+// DBのモデルモジュールをインポート
+const Subscriber = require('./models/subscriber');
+
+//　方法①Subscriberをインスタンス化(モデルのインスタンスをドキュメントと呼ぶ)
+let subscriber1 = new Subscriber({
+  name: 'ジョン',
+  email: 'jon@gmail.com'
+});
+// SubscriberをDBに保存する
+subscriber1.save((error, savedDocument) => {
+  // エラーがあれば次のミドルウェア関数に渡す
+  if (error) console.log(error);
+  // 保存したドキュメントをログに出力
+  console.log(savedDocument);
+});
+
+// 方法②上記newとsaveを一度に行う方法
+Subscriber.create({
+  name: 'なすびちゃん',
+  email: 'nasubi@gmail.com'
+}, function (error, savedDocument) {
+  if (error) console.log(error);
+  console.log(savedDocument);
+}
+);
+
+// 上記内容でsubscribersというDBが作成されている事がCompassやシェルで確認できる,(DB名はモデル名に s がつく様子()
+
+// データベースないのドキュメントの検索例(1つのドキュメントを見つける方法),変数に代入して使う
+// 参考：https://mongoosejs.com/docs/api.html#model_Model.findOne
+const myQuery = Subscriber.findOne({
+  name: 'なすびちゃん'
+});
+
+// クエリを実行
+myQuery.exec((error, data)=> { // exec:クエリの実行
+  if(data) console.log(data.name);
 });
 
 /*--------------------------------------------*/
@@ -48,7 +82,7 @@ const errorControllers = require('./controllers/errorController');
 // HTTPリクエストのバッファルトリームをでコードする（bodyの解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
 app.use(
   express.urlencoded({
-    extended:false
+    extended: false
   })
 );
 app.use(express.json());
