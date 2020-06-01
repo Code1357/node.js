@@ -18,7 +18,7 @@ const mongoose = require('mongoose');
 const subscriberSchema = mongoose.Schema({
   name: String, // プロパティ: データ型
   email: String,
-  zipCode: Number
+  postalCode: Number
 });
 
 // 定義したスキーマをモデルに適用する(設計図名:'Subscriber')

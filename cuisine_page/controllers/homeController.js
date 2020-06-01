@@ -5,13 +5,13 @@
   res.render('courses'); // courses.ejsをレス
 }; */
 
-exports.showSignUp = (req, res) => {
+/* exports.showSignUp = (req, res) => {
   res.render('contact'); // contact.ejsをレス
-};
+}; */
 
-exports.postedSignUpFrom = (req, res) => {
+/* exports.postedSignUpFrom = (req, res) => {
   res.render('thanks'); // thanks.ejsをレス
-};
+}; */
 
 // 個別の経路2
 exports.showCourses = (req, res) => {

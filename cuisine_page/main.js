@@ -22,12 +22,12 @@ db.once('open', () => {
 });
 
 // DBのモデルモジュールをインポート
-const Subscriber = require('./models/subscriber');
+/* const Subscriber = require('./models/subscriber'); */
 
 //　方法①Subscriberをインスタンス化(モデルのインスタンスをドキュメントと呼ぶ)
-let subscriber1 = new Subscriber({
-  name: 'ジョン',
-  email: 'jon@gmail.com'
+/* let subscriber1 = new Subscriber({
+  name: 'ちょこらんど',
+  email: 'chokolund@gmail.com'
 });
 // SubscriberをDBに保存する
 subscriber1.save((error, savedDocument) => {
@@ -36,29 +36,29 @@ subscriber1.save((error, savedDocument) => {
   // 保存したドキュメントをログに出力
   console.log(savedDocument);
 });
-
+ */
 // 方法②上記newとsaveを一度に行う方法
-Subscriber.create({
+/* Subscriber.create({
   name: 'なすびちゃん',
   email: 'nasubi@gmail.com'
 }, function (error, savedDocument) {
   if (error) console.log(error);
   console.log(savedDocument);
 }
-);
+); */
 
 // 上記内容でsubscribersというDBが作成されている事がCompassやシェルで確認できる,(DB名はモデル名に s がつく様子()
 
 // データベースないのドキュメントの検索例(1つのドキュメントを見つける方法),変数に代入して使う
 // 参考：https://mongoosejs.com/docs/api.html#model_Model.findOne
-const myQuery = Subscriber.findOne({
+/* const myQuery = Subscriber.findOne({
   name: 'なすびちゃん'
-});
+}); */
 
 // クエリを実行
-myQuery.exec((error, data)=> { // exec:クエリの実行
+/* myQuery.exec((error, data)=> { // exec:クエリの実行
   if(data) console.log(data.name);
-});
+}); */
 
 /*--------------------------------------------*/
 
@@ -77,6 +77,7 @@ app.use(express.static('public'));
 
 // homeControllerインポート
 const homeController = require('./controllers/homeController');
+const subscriberController = require('./controllers/subscribersController');
 const errorControllers = require('./controllers/errorController');
 
 // HTTPリクエストのバッファルトリームをでコードする（bodyの解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
@@ -94,8 +95,21 @@ app.get('/', (req, res) => {
 
 // リクエストのパスに応じて対応する経路
 app.get('/courses', homeController.showCourses);
-app.get('/contact', homeController.showSignUp);
-app.post('/thanks', homeController.postedSignUpFrom);
+ // *購読ページ用のGETルート
+app.get('/contact', subscriberController.getSubscriptionPage);
+ // *購読データを処理するPOSTルート
+app.post("/subscribe" ,subscriberController.saveSubscriber);
+ // 送信後のサンクス用のGETルート
+/* app.post('/thanks', homeController.postedSignUpFrom); */
+
+// リクエストをgetAllSubscribers関数に渡す
+app.get('/subscribers', subscriberController.getAllSubscribers, (req, res, next) => {
+  // reqesutオブジェクトからのデータをログ煮出す
+  console.log(req.data);
+  // データをブラウザのウィンドウに表示する
+  res.render('subscribers', {subscribers: req.data}); // subscribers.ejsを呼び出す,{subscribers: req.data}は、req.dataを変数subscribersに代入して.ejsに反映させる
+});
+
 
 // Errorの経路
 app.use(errorControllers.pageNotFoundError);
