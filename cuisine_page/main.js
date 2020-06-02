@@ -21,6 +21,10 @@ db.once('open', () => {
   console.log('mongooseを使ってMongoDBに接続できました！')
 });
 
+// mongooseでPromiseを使用する,必要？
+// mongoose.Promise = global.Promise -> あっても、なくても問題なさそうなのでコメントあウトしておく
+
+
 // DBのモデルモジュールをインポート
 /* const Subscriber = require('./models/subscriber'); */
 
