@@ -18,7 +18,7 @@ exports.getAllSubscribers = (req, res, next) => {
 }; ｰ> 下記に書き直し*/
 
 // getAllSubscribersの書き直し/ん？ES6タイプに記述し直しただけ？
-exports.getAllSubscribers = (rew, res) => {
+exports.getAllSubscribers = (req, res) => {
   Subscriber.find({}).exec() // これがfindクエリからのプロミスを返す
     // 保存したデータが次のthenブロックに送られる
     .then((subscribers) => { //Promise.thenというところをチェーンにして記述,ここからプロミス

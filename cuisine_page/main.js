@@ -22,7 +22,7 @@ db.once('open', () => {
 });
 
 // mongooseでPromiseを使用する,必要？
-// mongoose.Promise = global.Promise -> あっても、なくても問題なさそうなのでコメントあウトしておく
+// mongoose.Promise = global.Promise -> あっても、なくても問題なさそうなのでコメントアウトしておく
 
 
 // DBのモデルモジュールをインポート
