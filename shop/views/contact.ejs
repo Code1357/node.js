@@ -1,0 +1,10 @@
+<%# クライアントにデータを入力してもらい最後はサンクスページまで誘導する流れ %> 
+<form action="/subscribe" method="post">
+<label for="name">名前</label>
+  <input type="text" name="name" placeholder="Name">
+  <label for="email">Email</label>
+  <input type="text" name="email" placeholder="Email">
+  <label for="postalCode">〒</label>
+  <input type="text" name="postalCode" placeholder="郵便番号" patttarn="\d{3}-\d{4}"><label for="postalCode">ハイフンなし,半角数字</label>
+  <input type="submit" name="submit">
+</form>
