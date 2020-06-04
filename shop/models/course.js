@@ -21,10 +21,9 @@ const couseSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model("Course" ,courseSchema);
+module.exports = mongoose.model('Course' ,courseSchema);
 
 
 
 
 
- 

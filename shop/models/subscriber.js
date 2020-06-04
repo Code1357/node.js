@@ -19,7 +19,7 @@ const subscriberSchema = new mongoose.Schema({
     min: [10000, '桁数が足りません'],
     max: 99999
   },
-  courses: [{type: mongoose.Schema.Types.ObjectId, ref: 'Course'}] // Courseモデルを参照
+  courses: [{type: mongoose.Schema.Types.ObjectId, ref: 'Course'}] // Courseモデルを参照,ref:リレーションを表現できる
 });
 
 
@@ -30,7 +30,7 @@ subscriberSchema.methods.getInfo = function() {
 
 // 同じpostalコードを持つ購読者を見つけるインスタンスメソッドを追加
 subscriberSchema.methods.findLocalSubscribers = function() {
-  return this.model("Subscriber").find({ zipCode: this.zipCode }).exec();
+  return this.model('Subscriber').find({ zipCode: this.zipCode }).exec();
 };
 
 

@@ -3,8 +3,55 @@
 // DBのモデルモジュールをインポート
 const Subscriber = require('../models/subscriber');
 
+// オブジェクトリテラルでモジュールをまとめる
+module.exports = {
+  index: (req, res) => {
+    Subscriber.find({})
+      // インデックスページにユーザー配列をレダリング
+      .then(subscribers => {
+        res.render('subscribers/index', {
+          subscribers: subscribers
+        });
+      })
+      // エラーならメッセージを出してホームページにリダイレクト
+      .chtch(error => {
+        console.log(`Error fetching subscribers: ${error.message}`);
+        res.redirect('/');
+      });
+  },
+  // contactページをレタリング(表示させる)する
+  getSubscriptionPage: (req, res) => {
+    res.render('contact');
+  },
+  // 購読者情報をDBに保存する
+  saveSubscriber: (req, res) => {
+    // インスタンス化
+    let newSubscriber = new Subscriber({
+      name: req.body.name,
+      email: req.body.email,
+      postalCode: req.body.postalCode
+    });
+    // 新しいSubscriberを保存
+    newSubscriber.save()　// save():mongooseのクエリメソッド
+      .then(() => { // ここからプロミス
+        res.render('thanks');
+      })
+      .catch(error => {
+        if (error) res.send(error);
+      });
+  }
+}
+
+/*
+上記の説明:コールバックのみでコードを実装していくと、入れ子が深くなっていく(コールバックヘルという)
+解消するためにPromiseを使って、コードを短くするよう工夫する
+*/
+
+
+
+// indexアクションと置き換えしたコード
 // すべての顧客情報を取り出す
-exports.getAllSubscribers = (req, res) => {
+/* getAllSubscribers = (req, res) => {
   Subscriber.find({}).exec() // findクエリ
     .then((subscribers) => { // ここからプロミス
       // データベースからの結果を受け取る
@@ -21,33 +68,4 @@ exports.getAllSubscribers = (req, res) => {
     .then(() => {
       console.log('プロミス完了');
     });
-};
-
-// contactページをレタリング(表示させる)する
-exports.getSubscriptionPage = (req, res) => {
-  res.render('contact');
-};
-
-// 購読者情報をDBに保存する
-exports.saveSubscriber = (req, res) => {
-  // インスタンス化
-  let newSubscriber = new Subscriber({
-    name: req.body.name,
-    email: req.body.email,
-    postalCode: req.body.postalCode
-  });
-  // 新しいSubscriberを保存
-  newSubscriber.save()　// save():mongooseのクエリメソッド
-    .then(() => { // ここからプロミス
-      res.render('thanks');
-    })
-    .catch(error => {
-      if (error) res.send(error);
-    });
-}; 
-
-
-/*
-上記の説明:コールバックのみでコードを実装していくと、入れ子が深くなっていく(コールバックヘルという)
-解消するためにPromiseを使って、コードを短くするよう工夫する
-*/
+}, */

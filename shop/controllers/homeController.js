@@ -1,13 +1,6 @@
 'use strict';
 
-// 個別の経路2
-exports.showCourses = (req, res) => {
-  res.render('courses', { // coureses.ejsをレス
-    offeredCourses: courses // オブジェクトを代入してからejsへ反映
-  });
-};
-
-// コースの配列お定義
+// コースの配列の定義
 const courses = [
   {
     title: 'ホールケーキ',
@@ -22,3 +15,14 @@ const courses = [
     cost: 10
   }
 ];
+
+
+// 経路のコントロール(オブジェクトリテラルでexportsする),モジュールが増えてくると収集がつかなくなる為
+
+module.exports = {
+  showCourses: (req, res) => {
+    res.render('courses', { // coureses.ejsをレス
+      offeredCourses: courses // オブジェクトを代入してからejsへ反映
+    });
+  }
+};

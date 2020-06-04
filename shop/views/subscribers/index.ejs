@@ -1,0 +1,20 @@
+<h2>Users Table</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>ZipCode</th>
+    </tr>
+  </thead>
+</table>
+
+<tbody>
+  <!--ビューの中で、ユーザーの配列をループする-->
+  <% users.forEach(user => { %>
+  <tr>
+    <td> <%= user.fullName %> </td>
+    <td> <%= user.email %> </td>
+    <td> <%= user.zipCode %> </td>
+  </tr>
+</tbody>

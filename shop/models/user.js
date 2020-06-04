@@ -1,12 +1,10 @@
 'use strict';
 
-// 分割代入している
-const mongoose = require('mongoose'),
-{Scema} = mongoose,
-
+const mongoose = require('mongoose');
+const {Schema} = mongoose; // オブジェクトの分割代入(どういう事？)
 
 // ユーザーのスキーマを作る
-const userSchema = new userSchema({
+const userSchema = new Schema({
   // ファーストネームとラストネームのプロパティ
   name: {
     first: {
@@ -42,3 +40,11 @@ const userSchema = new userSchema({
   // createdAtとupdatedAtの日時を記録するタイムスタンププロパティを追加
   timestamps: true
 });
+
+// ユーザーのフルネームを取得する仮想属性を追加,DBに保存はしないが、取得したり設定したりできる('fullName'にする)
+userSchema.virtual('fullName').get(function() {
+  return `${this.name.first} ${this.name.last}`;
+});
+
+module.exports = mongoose.model('User', userSchema)
+

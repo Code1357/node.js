@@ -12,6 +12,7 @@ db.once('open', () => {
   console.log('mongooseを使ってMongoDBに接続できました！')
 });
 
+
 // ecpress初期化,設定
 const express = require('express');
 const app = express();
@@ -28,6 +29,7 @@ app.use(express.static('public'));
 // homeControllerインポート
 const homeController = require('./controllers/homeController');
 const subscriberController = require('./controllers/subscribersController');
+const userController = require('./controllers/usersController');
 const errorControllers = require('./controllers/errorController');
 
 // HTTPリクエストのバッファルトリームをでコードする（bodyの解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
@@ -53,8 +55,8 @@ app.post("/subscribe" ,subscriberController.saveSubscriber);
 /* app.post('/thanks', homeController.postedSignUpFrom); */
 
 // すべての購読者を表示するビューへの経路
-app.get('/subscribers', subscriberController.getAllSubscribers);
-
+app.get('/subscribers', subscriberController.index);
+app.get('/users', userController.index);
 
 // Errorの経路
 app.use(errorControllers.pageNotFoundError);
@@ -64,3 +66,5 @@ app.use(errorControllers.internalServerError);
 app.listen(app.get('port'), () => {
   console.log(`localhost:${app.get('port')}を監視しています`);
 });
+
+
