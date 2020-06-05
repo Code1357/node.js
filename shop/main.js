@@ -68,5 +68,3 @@ app.use(errorControllers.internalServerError);
 app.listen(app.get('port'), () => {
   console.log(`localhost:${app.get('port')}を監視しています`);
 });
-
-

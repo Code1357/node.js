@@ -16,7 +16,8 @@ const subscriberSchema = new mongoose.Schema({
   zipCode: {
     type: Number,
     min: [10000, '桁数が足りません'],
-    max: 99999
+    max: 99999,
+    unique: true
   },
   courses: [{type: mongoose.Schema.Types.ObjectId, ref: 'Course'}] // Courseモデルを参照,ref:リレーションを表現できる
 });

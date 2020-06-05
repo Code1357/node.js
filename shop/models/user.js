@@ -1,7 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const { Schema } = mongoose; // オブジェクトの分割代入(どういう事？)
+const { Schema } = mongoose; // オブジェクトの分割代入
+// 参照：https://mongoosejs.com/docs/guide.html
 
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
@@ -10,7 +11,7 @@ const userSchema = new Schema(
     name: {
       first: {
         type: String,
-        trim: true // trim()を呼び出すか否か
+        trim: true // trim()を呼び出すか否か(前後空白の削除の可否)
       },
       last: {
         type: String,
@@ -33,9 +34,9 @@ const userSchema = new Schema(
       type: String,
       required: true
     },
-    // ユーザーをコースに繋げるコールプロパティを追加
+    // ユーザーをコースに繋げるコールプロパティを追加([]で配列にしている)
     courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
-    // ユーザーを購読者に繋げるsubscribedAccountを追加
+    // ユーザを購読者に繋るsubscribedAccountを追加
     subscribedAccount: { type: Schema.Types.ObjectId, ref: 'Subscriber' }
   },
   {
@@ -51,3 +52,6 @@ userSchema.virtual('fullName').get(function () {
 
 module.exports = mongoose.model('User', userSchema)
 
+
+
+// { type: Schema.Types.ObjectId, ref: 'モデル名' }　,　RDBの外部キーのようなもの
