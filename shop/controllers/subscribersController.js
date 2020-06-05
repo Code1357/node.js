@@ -5,24 +5,23 @@ const Subscriber = require('../models/subscriber');
 
 // オブジェクトリテラルでモジュールをまとめる
 module.exports = {
-  index: (req, res) => {
+  index: (req, res, next) => {
     Subscriber.find({})
       // インデックスページにユーザー配列をレダリング
       .then(subscribers => {
-        res.render('subscribers/index', {
-          subscribers: subscribers
-        });
+        res.locals.subscribers = subscribers;
+        next();
       })
-      // エラーならメッセージを出してホームページにリダイレクト
-      .chtch(error => {
+      .catch(error => {
         console.log(`Error fetching subscribers: ${error.message}`);
-        res.redirect('/');
+        next(error);
       });
   },
-  // contactページをレタリング(表示させる)する
-  getSubscriptionPage: (req, res) => {
-    res.render('contact');
+
+  indexView: (req, res) => {
+    res.render("subscribers/index");
   },
+
   // 購読者情報をDBに保存する
   saveSubscriber: (req, res) => {
     // インスタンス化
@@ -32,22 +31,21 @@ module.exports = {
       postalCode: req.body.postalCode
     });
     // 新しいSubscriberを保存
-    newSubscriber.save()　// save():mongooseのクエリメソッド
+    newSubscriber
+      .save()　// save():mongooseのクエリメソッド
       .then(() => { // ここからプロミス
-        res.render('thanks');
+        res.render("thanks");
       })
       .catch(error => {
         if (error) res.send(error);
       });
   }
-}
+};
 
 /*
 上記の説明:コールバックのみでコードを実装していくと、入れ子が深くなっていく(コールバックヘルという)
 解消するためにPromiseを使って、コードを短くするよう工夫する
 */
-
-
 
 // indexアクションと置き換えしたコード
 // すべての顧客情報を取り出す

@@ -12,6 +12,7 @@ db.once('open', () => {
   console.log('mongooseを使ってMongoDBに接続できました！')
 });
 
+mongoose.Promise = global.Promise;
 
 // ecpress初期化,設定
 const express = require('express');
@@ -40,23 +41,24 @@ app.use(
 );
 app.use(express.json());
 
+// 
+app.use(homeController.logRequestPaths);
+
 // 経路
-app.get('/', (req, res) => {
-  res.send('ようこそ、甘くて美味しい料理のページへ！')
-});
+app.get('/', homeController.index);
 
 // リクエストのパスに応じて対応する経路
 app.get('/courses', homeController.showCourses);
- // *購読ページ用のGETルート
-app.get('/contact', subscriberController.getSubscriptionPage);
- // *購読データを処理するPOSTルート
-app.post("/subscribe" ,subscriberController.saveSubscriber);
- // 送信後のサンクス用のGETルート
+// *購読ページ用のGETルート
+app.get('/contact', homeController.getSubscriptionPage);
+// *購読データを処理するPOSTルート
+app.post("/subscribe", subscriberController.saveSubscriber);
+// 送信後のサンクス用のGETルート
 /* app.post('/thanks', homeController.postedSignUpFrom); */
 
 // すべての購読者を表示するビューへの経路
-app.get('/subscribers', subscriberController.index);
-app.get('/users', userController.index);
+app.get('/subscribers', subscriberController.index, subscriberController.indexView);
+app.get('/users', userController.index, userController.indexView);
 
 // Errorの経路
 app.use(errorControllers.pageNotFoundError);

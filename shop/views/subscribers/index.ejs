@@ -1,4 +1,4 @@
-<h2>Users Table</h2>
+<h2>Subscibers Table</h2>
 <table class="table">
   <thead>
     <tr>
@@ -7,14 +7,15 @@
       <th>ZipCode</th>
     </tr>
   </thead>
-</table>
 
-<tbody>
-  <!--ビューの中で、ユーザーの配列をループする-->
-  <% users.forEach(user => { %>
-  <tr>
-    <td> <%= user.fullName %> </td>
-    <td> <%= user.email %> </td>
-    <td> <%= user.zipCode %> </td>
-  </tr>
-</tbody>
+  <tbody>
+    <!--ビューの中で、購読者の配列をループする-->
+    <% subscribers.forEach(subscriber => { %>
+    <tr>
+      <td> <%= subscriber.fullName %> </td>
+      <td> <%= subscriber.email %> </td>
+      <td> <%= subscriber.zipCode %> </td>
+    </tr>
+    <% }); %>
+  </tbody>
+</table>
