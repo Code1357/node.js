@@ -1,68 +1,75 @@
 'use strict';
 
+const express = require('express'); // express呼び出し
+const app = express(); // express初期化
+const router = express.Router(); // .Router初期化
+const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
-// DBへの接続
+const errorControllers = require('./controllers/errorController');
+const homeController = require('./controllers/homeController');
+const subscriberController = require('./controllers/subscribersController');
+const usersController = require('./controllers/usersController');
+const coursesController = require("./controllers/coursesController");
+// const Subscriber = require("./models/subscriber");
+
+// 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
+
+// mongooseでMongoDBに接続,参考：https://mongoosejs.com,参考：https://mongoosejs.com/docs/connections.html
 mongoose.connect('mongodb://localhost:27017/recipe_db',
   { useNewUrlParser: true, useUnifiedTopology: true }
 );
-// データベースをdb変数に代入
+
+// (node:2210)非推奨の警告を避ける事ができる,参考：https://mongoosejs.com/docs/connections.html
+mongoose.set("useCreateIndex", true);
+
+// データベースをdb変数に代入,参考：https://mongoosejs.com/docs/api.html#mongoose_Mongoose-connection
 const db = mongoose.connection;
-// mongooseでMongoDBへ接続
+// openイベント時、DBに接続できた事を1度だけログ出力する
 db.once('open', () => {
   console.log('mongooseを使ってMongoDBに接続できました！')
 });
 
-mongoose.Promise = global.Promise;
-
-// ecpress初期化,設定
-const express = require('express');
-const app = express();
+// app.setを使う事でprocess.env.PORT || 3000を'port'へ代入している
+// 参考：https://nodejs.org/dist/latest-v14.x/docs/api/all.html#process_process_env ,参考：http://expressjs.com/en/5x/api.html#app.set
 app.set('port', process.env.PORT || 3000); // portへ代入
 
-// express-ejs-layoutインポート,設定
-const layouts = require('express-ejs-layouts');
+// テンプレートエンジンejsを指定,参考：https://github.com/mde/ejs/wiki/Using-EJS-with-Express
 app.set('view engine', 'ejs');
-app.use(layouts);
 
-// 静的ファイルの供給
-app.use(express.static('public'));
+router.use(layouts); // ミドルウェア関数として、express-ejs-layoutsを使用
+router.use(express.static('public')); // 静的ファイルの供給を可能にするコード
 
-// homeControllerインポート
-const homeController = require('./controllers/homeController');
-const subscriberController = require('./controllers/subscribersController');
-const userController = require('./controllers/usersController');
-const errorControllers = require('./controllers/errorController');
-
-// HTTPリクエストのバッファルトリームをでコードする（bodyの解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
-app.use(
+// HTTPリクエストのバッファルトリームをエンコードする（urlエンコードの本体の解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
+router.use(
   express.urlencoded({
     extended: false
   })
 );
-app.use(express.json());
+router.use(express.json()); // リクエストのJSON本体を解析する
+router.use(homeController.logRequestPaths); //自作ミドルウェア関数
 
-// 
-app.use(homeController.logRequestPaths);
+// 下記から、getとpostの経路(ルーティングパスを記入)
+router.get('/', homeController.index);
+router.get('/contact', homeController.getSubscriptionPage);
+router.get('/users', usersController.index, usersController.indexView);
+router.get('/users/new', usersController.new);
+router.post('/users/create', usersController.create,usersController.redirectView);
+// router.get("/users/:id", usersController.show, usersController.showView);
+router.get('/subscribers', subscriberController.index, subscriberController.indexView);
+// router.get("/subscribers/new", subscribersController.new);
+// router.post("/subscribers/create", subscribersController.create, subscribersController.redirectView);
+// router.get("/subscribers/:id", subscribersController.show, subscribersController.showView);
+// router.get("/courses", coursesController.index, coursesController.indexView);
+// router.get("/courses/new", coursesController.new);
+// router.post("/courses/create", coursesController.create, coursesController.redirectView);
+// router.get("/courses/:id", coursesController.show, coursesController.showView);
+router.post("/subscribe", subscriberController.saveSubscriber);
 
-// 経路
-app.get('/', homeController.index);
+router.use(errorController.logErrors);
+router.use(errorController.respondNoResourceFound);
+router.use(errorController.respondInternalError);
 
-// リクエストのパスに応じて対応する経路
-app.get('/courses', homeController.showCourses);
-// *購読ページ用のGETルート
-app.get('/contact', homeController.getSubscriptionPage);
-// *購読データを処理するPOSTルート
-app.post("/subscribe", subscriberController.saveSubscriber);
-// 送信後のサンクス用のGETルート
-/* app.post('/thanks', homeController.postedSignUpFrom); */
-
-// すべての購読者を表示するビューへの経路
-app.get('/subscribers', subscriberController.index, subscriberController.indexView);
-app.get('/users', userController.index, userController.indexView);
-
-// Errorの経路
-app.use(errorControllers.pageNotFoundError);
-app.use(errorControllers.internalServerError);
+// app.use("/", router);
 
 // ポートの監視
 app.listen(app.get('port'), () => {
