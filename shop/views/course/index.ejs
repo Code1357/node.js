@@ -2,19 +2,21 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th>ZipCode</th>
+      <th>Title</th>
+      <th>Description</th>
     </tr>
   </thead>
-
   <tbody>
-    <!--ビューの中で、コースの配列をループする-->
     <% courses.forEach(course => { %>
     <tr>
-      <td> <%= course.fullName %> </td>
-      <td> <%= course.email %> </td>
-      <td> <%= course.zipCode %> </td>
+      <td>
+        <a href="<%= `/courses/${course._id}` %>">
+          <%= course.title %>
+        </a>
+      </td>
+      <td>
+        <%= course.description %>
+      </td>
     </tr>
     <% }); %>
   </tbody>

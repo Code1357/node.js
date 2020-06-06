@@ -1,10 +1,13 @@
-<%# クライアントにデータを入力してもらい最後はサンクスページまで誘導する流れ %> 
-<form action="/subscribe" method="post">
-<label for="name">名前</label>
-  <input type="text" name="name" placeholder="Name">
-  <label for="email">Email</label>
-  <input type="text" name="email" placeholder="Email">
-  <label for="zipCode">ZipCode</label>
-  <input type="text" name="zipCode" placeholder="zipCode" ><label for="zipCode">ハイフンなし,半角数字</label>
-  <input type="submit" name="submit">
-</form>
+<div class="col-sm-6">
+  <img src="images/graph.png" alt="">
+</div>
+<div class="col-sm-6">
+  <h1>Subscribe!</h1>
+  <p>Enter your email if you're interested to learn more:</p>
+  <form class="subscription-form" action="/subscribe" method="post">
+    <input type="text" name="name" placeholder="Name">
+    <input type="text" name="email" placeholder="Email">
+    <input type="text" name="zipCode" placeholder="Zip Code" pattern="[0-9]{5}">
+    <input type="submit" name="submit">
+  </form>
+</div>

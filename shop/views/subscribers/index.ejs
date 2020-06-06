@@ -4,17 +4,19 @@
     <tr>
       <th>Name</th>
       <th>Email</th>
-      <th>ZipCode</th>
     </tr>
   </thead>
-
   <tbody>
-    <!--ビューの中で、購読者の配列をループする-->
     <% subscribers.forEach(subscriber => { %>
     <tr>
-      <td> <%= subscriber.fullName %> </td>
-      <td> <%= subscriber.email %> </td>
-      <td> <%= subscriber.zipCode %> </td>
+      <td>
+        <a href="<%= `/subscribers/${subscriber._id}` %>">
+          <%= subscriber.name %>
+        </a>
+      </td>
+      <td>
+        <%= subscriber.email %>
+      </td>
     </tr>
     <% }); %>
   </tbody>

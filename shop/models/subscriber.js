@@ -28,7 +28,7 @@ subscriberSchema.methods.getInfo = function() {
   return `Name: ${this.name} Email: ${this.email} ZipCode: ${this.zipCode}`;
 };
 
-// 同じpostalコードを持つ購読者を見つけるインスタンスメソッドを追加
+// 同じzipCodeを持つ購読者を見つけるインスタンスメソッドを追加
 subscriberSchema.methods.findLocalSubscribers = function() {
   return this.model('Subscriber')
   .find({ zipCode: this.zipCode })

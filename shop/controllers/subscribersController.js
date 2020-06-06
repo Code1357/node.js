@@ -1,13 +1,11 @@
 'use strict';
 
-// DBのモデルモジュールをインポート
 const Subscriber = require('../models/subscriber');
 
-// オブジェクトリテラルでモジュールをまとめる
 module.exports = {
   index: (req, res, next) => {
     Subscriber.find({})
-      // インデックスページにユーザー配列をレダリング
+      // インデックスページにユーザー配列を表示させる
       .then(subscribers => {
         res.locals.subscribers = subscribers;
         next();
@@ -24,7 +22,6 @@ module.exports = {
 
   // 購読者情報をDBに保存する
   saveSubscriber: (req, res) => {
-    // インスタンス化
     let newSubscriber = new Subscriber({
       name: req.body.name,
       email: req.body.email,
@@ -39,31 +36,45 @@ module.exports = {
       .catch(error => {
         if (error) res.send(error);
       });
+  },
+  create: (req, res, next) => {
+    let subscriberParams = {
+      name: req.body.name,
+      email: req.body.email,
+      zipCode: req.body.zipCode
+    };
+    Subscriber.create(subscriberParams)
+      .then(subscriber => {
+        res.locals.redirect = "/subscribers";
+        res.locals.subscriber = subscriber;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error saving subscriber: ${error.message}`);
+        next(error);
+      });
+  },
+
+  show: (req, res, next) => {
+    let subscriberId = req.params.id;
+    Subscriber.findById(subscriberId)
+      .then(subscriber => {
+        res.locals.subscriber = subscriber;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error fetching subscriber by ID: ${error.message}`);
+        next(error);
+      });
+  },
+
+  showView: (req, res) => {
+    res.render("subscribers/show");
+  },
+
+  redirectView: (req, res, next) => {
+    let redirectPath = res.locals.redirect;
+    if (redirectPath !== undefined) res.redirect(redirectPath);
+    else next();
   }
 };
-
-/*
-上記の説明:コールバックのみでコードを実装していくと、入れ子が深くなっていく(コールバックヘルという)
-解消するためにPromiseを使って、コードを短くするよう工夫する
-*/
-
-// indexアクションと置き換えしたコード
-// すべての顧客情報を取り出す
-/* getAllSubscribers = (req, res) => {
-  Subscriber.find({}).exec() // findクエリ
-    .then((subscribers) => { // ここからプロミス
-      // データベースからの結果を受け取る
-      res.render('subscribers', {// subscribers.ejsを表示
-        subscribers: subscribers // プロパティ: ドキュメント(ejsへ渡せる部分)
-      });
-    })
-    // エラーをキャッチする
-    .catch((error) => {
-      console.log(error.massage);
-      return [];
-    })
-    // ロングメッセージでプロミスの連鎖を終える
-    .then(() => {
-      console.log('プロミス完了');
-    });
-}, */

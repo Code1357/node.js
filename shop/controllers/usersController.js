@@ -1,6 +1,5 @@
 'use strict';
 
-// ユーザーモデルのロード
 const User = require('../models/user');
 
 module.exports = {
@@ -10,7 +9,7 @@ module.exports = {
         res.locals.users = users;
         next();
       })
-      // エラーならメッセージを出してホームページにリダイレクト
+      // エラーならメッセージを出してホームにリダイレクト
       .catch(error => {
         console.log(`Error fetching users: ${error.message}`)
         next(error);
@@ -52,5 +51,20 @@ module.exports = {
     let redirectPath = res.locals.redirect;
     if (redirectPath) res.redirect(redirectPath);
     else next();
+  },
+  show: (req, res, next) => {
+    let userId = req.params.id;
+    User.findById(userId)
+      .then(user => {
+        res.locals.user = user;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error fetching user by ID: ${error.message}`);
+        next(error);
+      });
+  },
+  showView: (req, res) => {
+    res.render("users/show");
   }
 };

@@ -1,9 +1,9 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const { Schema } = mongoose; // オブジェクトの分割代入
-// 参照：https://mongoosejs.com/docs/guide.html
-
+// オブジェクトの分割代入, 参照：https://mongoosejs.com/docs/guide.html
+const { Schema } = mongoose;
+const Subscriber = require('./subscriber');
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
   {
@@ -48,6 +48,25 @@ const userSchema = new Schema(
 // ユーザーのフルネームを取得する仮想属性を追加,DBに保存はしないが、取得したり設定したりできる('fullName'にする)
 userSchema.virtual('fullName').get(function () {
   return `${this.name.first} ${this.name.last}`;
+});
+
+userSchema.pre("save", function(next) {
+  let user = this;
+  if (user.subscribedAccount === undefined) {
+    Subscriber.findOne({
+      email: user.email
+    })
+      .then(subscriber => {
+        user.subscribedAccount = subscriber;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error in connecting subscriber:${error.message}`);
+        next(error);
+      });
+  } else {
+    next();
+  }
 });
 
 module.exports = mongoose.model('User', userSchema)

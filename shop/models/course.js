@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 
-const couseSchema = new mongoose.Schema({
+const courseSchema = new mongoose.Schema({
   // コースのスキーマにプロパティを追加
   title: {
     typw: String,
@@ -21,7 +21,7 @@ const couseSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Course' ,courseSchema);
+module.exports = mongoose.model('Course', courseSchema);
 
 
 

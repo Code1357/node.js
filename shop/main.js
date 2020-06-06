@@ -5,10 +5,10 @@ const app = express(); // express初期化
 const router = express.Router(); // .Router初期化
 const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
-const errorControllers = require('./controllers/errorController');
+const errorController = require("./controllers/errorController")
 const homeController = require('./controllers/homeController');
-const subscriberController = require('./controllers/subscribersController');
-const usersController = require('./controllers/usersController');
+const subscribersController = require('./controllers/subscribersController');
+const usersController = require("./controllers/usersController");
 const coursesController = require("./controllers/coursesController");
 // const Subscriber = require("./models/subscriber");
 
@@ -51,25 +51,25 @@ router.use(homeController.logRequestPaths); //自作ミドルウェア関数
 // 下記から、getとpostの経路(ルーティングパスを記入)
 router.get('/', homeController.index);
 router.get('/contact', homeController.getSubscriptionPage);
-router.get('/users', usersController.index, usersController.indexView);
+router.get("/users", usersController.index, usersController.indexView);
 router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.create,usersController.redirectView);
-// router.get("/users/:id", usersController.show, usersController.showView);
-router.get('/subscribers', subscriberController.index, subscriberController.indexView);
-// router.get("/subscribers/new", subscribersController.new);
-// router.post("/subscribers/create", subscribersController.create, subscribersController.redirectView);
-// router.get("/subscribers/:id", subscribersController.show, subscribersController.showView);
-// router.get("/courses", coursesController.index, coursesController.indexView);
-// router.get("/courses/new", coursesController.new);
-// router.post("/courses/create", coursesController.create, coursesController.redirectView);
-// router.get("/courses/:id", coursesController.show, coursesController.showView);
-router.post("/subscribe", subscriberController.saveSubscriber);
+router.get("/users/:id", usersController.show, usersController.showView);
+router.get('/subscribers', subscribersController.index, subscribersController.indexView);
+router.get("/subscribers/new", subscribersController.new);
+router.post("/subscribers/create", subscribersController.create, subscribersController.redirectView);
+router.get("/subscribers/:id", subscribersController.show, subscribersController.showView);
+router.get("/courses", coursesController.index, coursesController.indexView);
+router.get("/courses/new", coursesController.new);
+router.post("/courses/create", coursesController.create, coursesController.redirectView);
+router.get("/courses/:id", coursesController.show, coursesController.showView);
+router.post("/subscribe", subscribersController.saveSubscriber);
 
 router.use(errorController.logErrors);
 router.use(errorController.respondNoResourceFound);
 router.use(errorController.respondInternalError);
 
-// app.use("/", router);
+app.use("/", router);
 
 // ポートの監視
 app.listen(app.get('port'), () => {
