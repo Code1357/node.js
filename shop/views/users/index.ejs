@@ -1,4 +1,4 @@
-<h2>Users Table</h2>
+<h2>ユーザー情報一覧</h2>
 <table class="table">
   <thead>
     <tr>
@@ -19,3 +19,12 @@
     <% }); %>
   </tbody>
 </table>
+
+<%# // 3 (indexの経路)
+main.jsの/usersパスを叩くと、 
+usersController.jsのindex実行し、
+Userに基づき、modelsの設計図を使って、
+DBusersにある情報を取得しindex.ejsで指定された情報のみページに表示する。
+%> 
+
+<%# %= user.fullName %のuserはmodelの中のオブジェクトの中のプロパティの値 %> 

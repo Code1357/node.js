@@ -37,6 +37,9 @@ module.exports = {
         if (error) res.send(error);
       });
   },
+  new: (req, res) => {
+    res.render("subscribers/new");
+  },
   create: (req, res, next) => {
     let subscriberParams = {
       name: req.body.name,

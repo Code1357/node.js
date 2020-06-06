@@ -10,7 +10,7 @@ const homeController = require('./controllers/homeController');
 const subscribersController = require('./controllers/subscribersController');
 const usersController = require("./controllers/usersController");
 const coursesController = require("./controllers/coursesController");
-// const Subscriber = require("./models/subscriber");
+const Subscriber = require("./models/subscriber");
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
@@ -49,9 +49,9 @@ router.use(express.json()); // リクエストのJSON本体を解析する
 router.use(homeController.logRequestPaths); //自作ミドルウェア関数
 
 // 下記から、getとpostの経路(ルーティングパスを記入)
-router.get('/', homeController.index);
-router.get('/contact', homeController.getSubscriptionPage);
-router.get("/users", usersController.index, usersController.indexView);
+router.get('/', homeController.index); /*1*/
+router.get('/contact', homeController.getSubscriptionPage); /*2*/
+router.get("/users", usersController.index /*3*/ , usersController.indexView /*3.1*/);
 router.get('/users/new', usersController.new);
 router.post('/users/create', usersController.create,usersController.redirectView);
 router.get("/users/:id", usersController.show, usersController.showView);
@@ -75,3 +75,11 @@ app.use("/", router);
 app.listen(app.get('port'), () => {
   console.log(`localhost:${app.get('port')}を監視しています`);
 });
+
+
+/*.use
+・ミドルウェア関数をロードする（読み込む）
+・リクエストが来たら、最初に発動する
+・レスポンスがサーバーから出ていく時にも発動する
+・参考：http://expressjs.com/ja/guide/writing-middleware.html#writing-middleware-for-use-in-express-apps
+*/

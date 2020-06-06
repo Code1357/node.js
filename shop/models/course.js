@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const courseSchema = new mongoose.Schema({
   // コースのスキーマにプロパティを追加
   title: {
-    typw: String,
+    type: String,
     required: true,
     unique: true
   },
