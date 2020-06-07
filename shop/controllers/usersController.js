@@ -5,7 +5,7 @@ const User = require('../models/user');
 module.exports = {
   index: (req, res, next) => { // 3(DBの中身を検索して表示させる)
     User.find() // find()見つける
-      .then(users => {// .then,非同期処理が成功したら進む(users,コレクション名を記述)
+      .then(users => {// .then,非同期処理が成功したら進む(users,コレクション名を記述)/usersはDB名と思われる
         res.locals.users = users; // usersをres.locals.usersに代入
         next(); // 次の経路へ
       })
@@ -19,12 +19,12 @@ module.exports = {
     res.render('users/index');
   },
   // フォームを表示させるアクション
-  new: (req, res) => {
+  new: (req, res) => { // 4
     res.render('users/new');
   },
   // ユーザの登録内容をDBに保存するために情報を作るアクション
   // new.ejsから受け取ったデータを次のミドルウエア関数のredirectViewに渡す
-  create: (req, res, next) => {
+  create: (req, res, next) => { // 5
     let userParams = {
       name: {
         first: req.body.first,　// .firstはejsで設定したname属性
@@ -47,7 +47,7 @@ module.exports = {
       });
   },
   // ビューの表示は、redirectViewアクションで別に行う(createアクションから引き継ぐ)
-  redirectView: (req, res, next) => {
+  redirectView: (req, res, next) => { // 5.1
     let redirectPath = res.locals.redirect;
     if (redirectPath) res.redirect(redirectPath);
     else next();
@@ -64,7 +64,7 @@ module.exports = {
         next(error);
       });
   },
-  showView: (req, res) => {
+  showView: (req, res) => { // 6
     res.render("users/show");
   }
 };

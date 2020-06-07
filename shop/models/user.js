@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     zipCode: {
       type: Number,
-      min: [1000, '桁数が足りません'],
+      min: [10000, '桁数が足りません'],
       max: 99999
     },
     // パスワードのプロパティを追加
@@ -50,7 +50,7 @@ userSchema.virtual('fullName').get(function () {
   return `${this.name.first} ${this.name.last}`;
 });
 
-userSchema.pre("save", function(next) {
+userSchema.pre("save", function(next) { // pre:saveを実行する前,の意味
   let user = this;
   if (user.subscribedAccount === undefined) {
     Subscriber.findOne({

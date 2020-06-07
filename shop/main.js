@@ -52,9 +52,9 @@ router.use(homeController.logRequestPaths); //自作ミドルウェア関数
 router.get('/', homeController.index); /*1*/
 router.get('/contact', homeController.getSubscriptionPage); /*2*/
 router.get("/users", usersController.index /*3*/ , usersController.indexView /*3.1*/);
-router.get('/users/new', usersController.new);
-router.post('/users/create', usersController.create,usersController.redirectView);
-router.get("/users/:id", usersController.show, usersController.showView);
+router.get('/users/new', usersController.new); /*4*/
+router.post('/users/create', usersController.create, /*5*/usersController.redirectView); /*5.1*/
+router.get("/users/:id", usersController.show, usersController.showView); /*6*/
 router.get('/subscribers', subscribersController.index, subscribersController.indexView);
 router.get("/subscribers/new", subscribersController.new);
 router.post("/subscribers/create", subscribersController.create, subscribersController.redirectView);
@@ -69,7 +69,7 @@ router.use(errorController.logErrors);
 router.use(errorController.respondNoResourceFound);
 router.use(errorController.respondInternalError);
 
-app.use("/", router);
+app.use("/", router); // appの変わりにrouterを使えという命令
 
 // ポートの監視
 app.listen(app.get('port'), () => {
