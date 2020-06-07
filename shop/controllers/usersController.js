@@ -5,7 +5,7 @@ const User = require('../models/user');
 module.exports = {
   index: (req, res, next) => { // 3(DBの中身を検索して表示させる)
     User.find() // find()見つける
-      .then(users => {// .then,非同期処理が成功したら進む
+      .then(users => {// .then,非同期処理が成功したら進む(users,コレクション名を記述)
         res.locals.users = users; // usersをres.locals.usersに代入
         next(); // 次の経路へ
       })

@@ -10,11 +10,11 @@
 
   <tbody>
     <!--ビューの中で、ユーザーの配列をループする-->
-    <% users.forEach(user => { %>
+    <% users.forEach(a => { %> <%# forEachの引数はなんでも良い %> 
     <tr>
-      <td> <%= user.fullName %> </td>
-      <td> <%= user.email %> </td>
-      <td> <%= user.zipCode %> </td>
+      <td> <%= a.fullName %> </td>
+      <td> <%= a.email %> </td>
+      <td> <%= a.zipCode %> </td>
     </tr>
     <% }); %>
   </tbody>
@@ -26,5 +26,3 @@ usersController.jsのindex実行し、
 Userに基づき、modelsの設計図を使って、
 DBusersにある情報を取得しindex.ejsで指定された情報のみページに表示する。
 %> 
-
-<%# %= user.fullName %のuserはmodelの中のオブジェクトの中のプロパティの値 %> 
