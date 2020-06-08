@@ -10,7 +10,7 @@ const homeController = require('./controllers/homeController');
 const subscribersController = require('./controllers/subscribersController');
 const usersController = require("./controllers/usersController");
 const coursesController = require("./controllers/coursesController");
-const Subscriber = require("./models/subscriber");
+const methodOverride = require("method-override");
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
@@ -36,6 +36,11 @@ app.set('port', process.env.PORT || 3000); // portへ代入
 // テンプレートエンジンejsを指定,参考：https://github.com/mde/ejs/wiki/Using-EJS-with-Express
 app.set('view engine', 'ejs');
 
+router.use(methodOverride("_method", { // method-overrideを処理,アプリケーションルータを設定(クエリパラメータ_methodを見つけたら、指定されたmethodを解釈する。例)?_method=PUT)
+  methods: ["POST", "GET"]
+})
+);
+
 router.use(layouts); // ミドルウェア関数として、express-ejs-layoutsを使用
 router.use(express.static('public')); // 静的ファイルの供給を可能にするコード
 
@@ -51,19 +56,23 @@ router.use(homeController.logRequestPaths); //自作ミドルウェア関数
 // 下記から、getとpostの経路(ルーティングパスを記入)
 router.get('/', homeController.index); /*1*/
 router.get('/contact', homeController.getSubscriptionPage); /*2*/
-router.get("/users", usersController.index /*3*/ , usersController.indexView /*3.1*/);
+
+router.get('/users', usersController.index /*3*/, usersController.indexView /*3.1*/);
 router.get('/users/new', usersController.new); /*4*/
 router.post('/users/create', usersController.create, /*5*/usersController.redirectView); /*5.1*/
-router.get("/users/:id", usersController.show, usersController.showView); /*6*/
+router.get('/users/:id/edit', usersController.edit);
+router.put("/users/:id/update", usersController.update, usersController.redirectView); // PUT
+router.get('/users/:id', usersController.show, usersController.showView); /*6*/
+
 router.get('/subscribers', subscribersController.index, subscribersController.indexView);
-router.get("/subscribers/new", subscribersController.new);
-router.post("/subscribers/create", subscribersController.create, subscribersController.redirectView);
-router.get("/subscribers/:id", subscribersController.show, subscribersController.showView);
-router.get("/courses", coursesController.index, coursesController.indexView);
-router.get("/courses/new", coursesController.new);
-router.post("/courses/create", coursesController.create, coursesController.redirectView);
-router.get("/courses/:id", coursesController.show, coursesController.showView);
-router.post("/subscribe", subscribersController.saveSubscriber);
+router.get('/subscribers/new', subscribersController.new);
+router.post('/subscribers/create', subscribersController.create, subscribersController.redirectView);
+router.get('/subscribers/:id', subscribersController.show, subscribersController.showView);
+router.get('/courses', coursesController.index, coursesController.indexView);
+router.get('/courses/new', coursesController.new);
+router.post('/courses/create', coursesController.create, coursesController.redirectView);
+router.get('/courses/:id', coursesController.show, coursesController.showView);
+router.post('/subscribe', subscribersController.saveSubscriber);
 
 router.use(errorController.logErrors);
 router.use(errorController.respondNoResourceFound);

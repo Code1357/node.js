@@ -24,7 +24,7 @@ module.exports = {
   },
   // ユーザの登録内容をDBに保存するために情報を作るアクション
   // new.ejsから受け取ったデータを次のミドルウエア関数のredirectViewに渡す
-  create: (req, res, next) => { // 5
+ /*  create: (req, res, next) => { // 5
     let userParams = {
       name: {
         first: req.body.first,　// .firstはejsで設定したname属性
@@ -33,7 +33,9 @@ module.exports = {
       email: req.body.email,
       password: req.body.password,
       zipCode: req.body.zipCode
-    };
+    }; */
+    create: (req, res, next) => {
+      let userParams = getUserParams(req.body);
     // 上記変数createをUserモデルで受け取る
     User.create(userParams) // Userモデル
       .then(user => {
@@ -71,11 +73,52 @@ module.exports = {
   // showのビューを表示する
   showView: (req, res) => { // 6
     res.render("users/show");
-  }
+  },
+
+  edit: (req, res, next) => {
+    let userId = req.params.id; // ユーザーIDを取得
+    User.findById(userId)
+      .then(user => { // 特定のユーザーのためにユーザ編集ページを表示
+        res.render("users/edit", {
+          user: user
+        });
+        console.log(user);
+      })
+      .catch(error => {
+        console.log(`ユーザーIDを取得する際にエラー発生: ${error.message} `)
+        next(error);
+      });
+  },
+
+  // 更新のアクション
+  update: (req, res, next) => {
+    let userId = req.params.id,
+      // ユーザーのパラメータをリクエストから収集する
+      userParams = getUserParams(req.body); // getUserParams???
+      // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
+    User.findByIdAndUpdate(userId, { // findByIdAndUpdat:mongooseのメソッド(ドキュメントを置き換え),参考：https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
+      $set: userParams // $setを使って、指定したIDと続くパラメータを受け取る
+    })
+      .then(user => {
+        // ローカル変数としてレスポンスに追加
+        res.locals.redirect = `/users/${userId}`;
+        res.locals.user = user;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error updating user by ID: ${error.message}`);
+        next(error);
+      });
+      // console.log($set);
+      // console.log(userParams);
+      // console.log(userId);
+      // console.log();
+  },
+
 };
 
 
-/* Model.find(): 
+/* Model.find():
 ・モデルで指定した項目をDBより呼び出す
 ・User.find({password: 'pass123'}) と引数を指定すると、絞り込み検索が可能
 ・参考：https://mongoosejs.com/docs/api.html#model_Model.find
@@ -87,7 +130,7 @@ module.exports = {
 ・繋げる必要がある場合にnextがなければAppがクラッシュしてしまう
  */
 
- /* ミドルウェア関数
+/* ミドルウェア関数
 ・必ず引数にnextの記述が必要
 ・リクエストが来たら、最初に発動する
 ・レスポンスがサーバーから出ていく時にも発動する

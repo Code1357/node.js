@@ -1,10 +1,15 @@
-<h2>ユーザー情報一覧</h2>
+<h2 class="center">ユーザー,一覧</h2>
+<div class="center">
+  <a class="button" href="/users/new">Create User</a>
+</div>
 <table class="table">
   <thead>
     <tr>
       <th>Name</th>
       <th>Email</th>
       <th>Zip Code</th>
+      <th>Edit</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -12,7 +17,7 @@
     <% users.forEach(user => { %>
     <tr>
       <td><%# ユーザーの名前とIDを、HTMLに埋め込む %>
-        <a href="<%= `/users/${user._subscribedAccount}` %>">
+        <a href="<%= `/users/${user._id}` %>">
           <%= user.fullName %>
         </a>
       </td>
@@ -22,6 +27,13 @@
       <td>
         <%= user.zipCode %>
       </td>
+       <td>
+      <%# 編集用のタグにユーザーのIDを埋め込む %> 
+        <a href="<%=`/users/${user._id}/edit`%>">
+          編集
+        </a>
+      </td>
+      <td>
     </tr>
     <% }); %>
   </tbody>
