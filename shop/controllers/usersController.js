@@ -52,18 +52,23 @@ module.exports = {
     if (redirectPath) res.redirect(redirectPath);
     else next();
   },
-  show: (req, res, next) => {
+  show: (req, res, next) => {// 6
+    // リクエストのパラメータからユーザーIDを取り出す
     let userId = req.params.id;
+    //　そのIDを持つユーザーを探す
     User.findById(userId)
       .then(user => {
+        //　レスポンスオブジェクト慶友でユーザーを次のミドルウェア関数に渡す
         res.locals.user = user;
         next();
       })
       .catch(error => {
+        //　エラーはロギングして次の関数に渡す
         console.log(`Error fetching user by ID: ${error.message}`);
         next(error);
       });
   },
+  // showのビューを表示する
   showView: (req, res) => { // 6
     res.render("users/show");
   }

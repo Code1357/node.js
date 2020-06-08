@@ -50,21 +50,26 @@ userSchema.virtual('fullName').get(function () {
   return `${this.name.first} ${this.name.last}`;
 });
 
-userSchema.pre("save", function(next) { // pre:saveを実行する前,の意味
-  let user = this;
-  if (user.subscribedAccount === undefined) {
-    Subscriber.findOne({
-      email: user.email
+// pre(mongooseのメソッドでフックという):saveを実行する前,の意味(ユーザーの作成と保存の直前に実行される)つまり、実行タイミングを制御してるって事？,参考：https://mongoosejs.com/docs/middleware.html#pre
+userSchema.pre("save", function(next) { 
+  let user = this; // 登録しようとしてる情報(console.logで確認できる)
+  // 既に購読者との関連があるのかをチェック
+  if (user.subscribedAccount === undefined) { // user.subscribedAccountに一致するemail情報が無ければ（あってるか不明？？？）
+    // 購読者一人を探すクエリ
+    Subscriber.findOne({ // Subscriberモデルの、DB,subscriberの中に
+      email: user.email // 登録しようとしているuserのemailと
     })
-      .then(subscriber => {
-        user.subscribedAccount = subscriber;
+      .then(subscriber => { // 一致していたら
+        user.subscribedAccount = subscriber; 
         next();
       })
       .catch(error => {
         console.log(`Error in connecting subscriber:${error.message}`);
+        //　エラーがあれば次のミドルウェア関すに渡す
         next(error);
       });
   } else {
+    // ユーザーに既存の関連がれば次の関すを呼び出す
     next();
   }
 });

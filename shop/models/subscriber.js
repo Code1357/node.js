@@ -23,12 +23,12 @@ const subscriberSchema = new mongoose.Schema({
 });
 
 
-// 購読者のフルネームを取得するインスタンスメソッドを追加(スキーマにインスタンスメソッドを定義できる)
+// 購読者のフルネームを取得するインスタンスメソッドを追加(スキーマにインスタンスメソッドを定義できる)???
 subscriberSchema.methods.getInfo = function() {
   return `Name: ${this.name} Email: ${this.email} ZipCode: ${this.zipCode}`;
 };
 
-// 同じzipCodeを持つ購読者を見つけるインスタンスメソッドを追加
+// 同じzipCodeを持つ購読者を見つけるインスタンスメソッドを追加???
 subscriberSchema.methods.findLocalSubscribers = function() {
   return this.model('Subscriber')
   .find({ zipCode: this.zipCode })

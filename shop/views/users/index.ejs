@@ -4,21 +4,29 @@
     <tr>
       <th>Name</th>
       <th>Email</th>
-      <th>ZipCode</th>
+      <th>Zip Code</th>
     </tr>
   </thead>
-
   <tbody>
     <!--ビューの中で、ユーザーの配列をループする-->
-    <% users.forEach(a => { %> <%# forEachの引数はなんでも良い %> 
+    <% users.forEach(user => { %>
     <tr>
-      <td> <%= a.fullName %> </td>
-      <td> <%= a.email %> </td>
-      <td> <%= a.zipCode %> </td>
+      <td><%# ユーザーの名前とIDを、HTMLに埋め込む %>
+        <a href="<%= `/users/${user._subscribedAccount}` %>">
+          <%= user.fullName %>
+        </a>
+      </td>
+      <td>
+        <%= user.email %>
+      </td>
+      <td>
+        <%= user.zipCode %>
+      </td>
     </tr>
     <% }); %>
   </tbody>
 </table>
+
 
 <%# // 3 (indexの経路)
 main.jsの/usersパスを叩くと、 
