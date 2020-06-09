@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const Course = require("../models/course");
 
@@ -55,6 +55,56 @@ module.exports = {
 
   showView: (req, res) => {
     res.render("courses/show");
+  },
+
+  edit: (req, res, next) => {
+    let courseId = req.params.id;
+    Course.findById(courseId)
+      .then(course => {
+        res.render("courses/edit", {
+          course: course
+        });
+      })
+      .catch(error => {
+        console.log(`Error fetching course by ID: ${error.message}`);
+        next(error);
+      });
+  },
+
+  update: (req, res, next) => {
+    let courseId = req.params.id,
+      courseParams = {
+        title: req.body.title,
+        description: req.body.description,
+        items: [req.body.items.split(",")],
+        zipCode: req.body.zipCode
+      };
+
+    Course.findByIdAndUpdate(courseId, {
+      $set: courseParams
+    })
+      .then(course => {
+        res.locals.redirect = `/courses/${courseId}`;
+        res.locals.course = course;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error updating course by ID: ${error.message}`);
+        next(error);
+      });
+  },
+
+  delete: (req, res, next) => {
+    let courseId = req.params.id;
+    Course.findByIdAndRemove(courseId)
+      .then(() => {
+        res.locals.redirect = "/courses";
+        next();
+      })
+      .catch(error => {
+        console.log(`Error deleting course by ID: ${error.message}`);
+        next();
+      });
   },
 
   redirectView: (req, res, next) => {

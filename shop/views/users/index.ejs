@@ -1,6 +1,6 @@
 <h2 class="center">ユーザー,一覧</h2>
 <div class="center">
-  <a class="button" href="/users/new">Create User</a>
+  <a class="button" href="/users/new">新規ユーザー登録</a>
 </div>
 <table class="table">
   <thead>
@@ -33,6 +33,9 @@
           編集
         </a>
       </td>
+      <td>
+      <%# 削除可否のダイアログを表示して、OKなら削除アクションのパスに飛ぶ,return confirm（HTMLの属性） %> 
+      <a href="<%=`/users/${user._id}/delete?_method=DELETE` %>" onclick="return confirm(' <%= user.fullName %> のレコードを本当に削除しても良いですか？')">削除</a>
       <td>
     </tr>
     <% }); %>

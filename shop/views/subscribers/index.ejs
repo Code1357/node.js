@@ -4,6 +4,8 @@
     <tr>
       <th>Name</th>
       <th>Email</th>
+      <th>Edit</th>
+      <th>Delete</th>
     </tr>
   </thead>
   <tbody>
@@ -16,6 +18,14 @@
       </td>
       <td>
         <%= subscriber.email %>
+      </td>
+      <td>
+        <a href="<%=`subscribers/${subscriber._id}/edit`%>">
+          編集しましょ
+        </a>
+      </td>
+      <td>
+        <a href="<%= `subscribers/${subscriber._id}/delete?_method=DELETE` %>" onclick="return confirm('このレコードを削除しても良いですか？')">削除</a>
       </td>
     </tr>
     <% }); %>

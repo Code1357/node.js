@@ -91,9 +91,9 @@ module.exports = {
 
   // 更新のアクション
   update: (req, res, next) => {
-    let userId = req.params.id,
+    let userId = req.params.id, // ローカル変数
       // ユーザーのパラメータをリクエストから収集する
-      userParams = {
+      userParams = { //　更新させたいフィールド？？
         name: {
           first: req.body.first,
           last: req.body.last
@@ -104,24 +104,31 @@ module.exports = {
       };// getUserParams???
       // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
     User.findByIdAndUpdate(userId, { // findByIdAndUpdat:mongooseのメソッド(ドキュメントを置き換え),参考：https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
-      $set: userParams // $setを使って、指定したIDと続くパラメータを受け取る
+      $set: userParams // $setを使って、指定したIDと続くパラメータを受け取る(ここには、変更後の値が入る)
     })
       .then(user => {
         // ローカル変数としてレスポンスに追加
-        res.locals.redirect = `/users/${userId}`;
-        res.locals.user = user;
+        res.locals.redirect = `/users/${userId}`; // ローカル変数を格納,該当のIDを埋め込む
+        res.locals.user = user; // undefined
         next();
       })
       .catch(error => {
-        console.log(`Error updating user by ID: ${error.message}`);
+        console.log(`Error ユーザーを更新できず: ${error.message}`); // // error.message,なんでも良い？むしろ、messageは無い方が良い？
         next(error);
       });
-      // console.log($set);
-      // console.log(userParams);
-      // console.log(userId);
-      // console.log();
   },
-
+  delete: (req, res, next) => {
+    let userId = req.params.id;
+    User.findByIdAndRemove(userId) // 該当のユーザーIDを見つけて、削除のメソッドを実行してIDそのものを削除
+      .then(() => {
+        res.locals.redirect = "/users"; // ローカルファイルに転送
+        next();
+      })
+      .catch(error => {
+        console.log(`Error 該当のユーザーを削除できませんでした: ${error.message}`);
+        next();
+      });
+  }
 };
 
 
