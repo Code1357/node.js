@@ -23,6 +23,10 @@
   </tr>
 </table>
 
+<p>この購読者の関連しているコース
+  <%= subscriber.courses.length %> associated course(s) <%# 関連づけたページの表示 %> 
+</p>
+
 
 <div>
   <a class="button" href="/subscribers">購読者の全てを確認</a>
@@ -34,4 +38,7 @@
 </div>
 <div>
   <a class="button" href="<%= `/subscribers/${subscriber._id}/delete?_method=DELETE` %>" onclick="return confirm('ほんとにほんとに、このレコードを削除して良いの？')">削除ボタン</a>
+</div>
+<div>
+  <a class="button" href="/subscribers">すべての購読者を確認</a>
 </div>

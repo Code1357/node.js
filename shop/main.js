@@ -54,11 +54,11 @@ router.use(
   })
 );
 router.use(express.json()); // リクエストのJSON本体を解析する
-router.use(homeController.logRequestPaths); //自作ミドルウェア関数
+router.use(homeController.logRequestPaths); //自作ミドルウェア関数？？？
 
 // 下記から、getとpostの経路(ルーティングパスを記入)
 router.get('/', homeController.index); /*1*/
-router.get('/contact', homeController.getSubscriptionPage); /*2*/
+// router.get('/contact', homeController.getSubscriptionPage); /*2*/
 
 router.get('/users', usersController.index /*3*/, usersController.indexView /*3.1*/);
 router.get('/users/new', usersController.new); /*4*/
@@ -90,7 +90,7 @@ router.put("/courses/:id/update", coursesController.update, coursesController.re
 router.delete("/courses/:id/delete", coursesController.delete, coursesController.redirectView);
 router.get("/courses/:id", coursesController.show, coursesController.showView);
 
-router.post('/subscribe', subscribersController.saveSubscriber);
+// router.post('/subscribe', subscribersController.saveSubscriber);
 
 router.use(errorController.logErrors);
 router.use(errorController.respondNoResourceFound);

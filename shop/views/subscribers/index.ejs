@@ -1,4 +1,4 @@
-<h2>Subscibers Table</h2>
+<h2 class="center">Subscribers Table</h2>
 <table class="table">
   <thead>
     <tr>
@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    <% subscribers.forEach(subscriber => { %>
+    <% subscribers.forEach(subscriber => { %> <%# ループ処理/順番にデータを取得していく/購読者ごとの生成 %> 
     <tr>
       <td>
         <a href="<%= `/subscribers/${subscriber._id}` %>">
@@ -20,12 +20,12 @@
         <%= subscriber.email %>
       </td>
       <td>
-        <a href="<%=`subscribers/${subscriber._id}/edit`%>">
+        <a href="<%=`subscribers/${subscriber._id}/edit`%>"> <%# リンク/経路 %> 
           編集しましょ
         </a>
       </td>
       <td>
-        <a href="<%= `subscribers/${subscriber._id}/delete?_method=DELETE` %>" onclick="return confirm('このレコードを削除しても良いですか？')">削除</a>
+        <a href="<%= `subscribers/${subscriber._id}/delete?_method=DELETE` %>" onclick="return confirm('このレコードを削除しても良いですか？')">削除</a> <%# リンク/経路/ダイアログ %> 
       </td>
     </tr>
     <% }); %>

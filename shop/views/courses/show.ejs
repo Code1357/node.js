@@ -1,4 +1,4 @@
-<h1 class="center">コースのデータです
+<h1 class="center">Course Data for
   <%= course.title %>
 </h1>
 
@@ -16,22 +16,19 @@
     </td>
   </tr>
   <tr>
-    <th>Items</th>
+    <th>Max Students</th>
     <td>
-      <%= course.items%>
+      <%= course.maxStudents%>
     </td>
   </tr>
   <tr>
-    <th>Zip Code</th>
-    <td>
-      <%= course.zipCode%>
+    <th>Cost</th>
+    <td>$
+      <%= course.cost%>
     </td>
   </tr>
 </table>
 
-<div>
-  <a class="button" href="/courses">ユーザー一覧を表示</a>
-</div>
 <div>
   <a class="button" href="<%=`/courses/${course._id}/edit`%>">
     Edit Course Details
@@ -39,4 +36,7 @@
 </div>
 <div>
   <a class="button" href="<%= `/courses/${course._id}/delete?_method=DELETE` %>" onclick="return confirm('本当にこのレコード削除して良いの？')">削除っち</a>
+</div>
+<div>
+  <a class="button" href="/courses">View all courses</a>
 </div>

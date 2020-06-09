@@ -1,8 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
-
-const courseSchema = new mongoose.Schema({
+const { Schema } = require('mongoose'); //  ?
+const courseSchema = new Schema({
   // コースのスキーマにプロパティを追加
   title: {
     type: String,
@@ -13,13 +13,21 @@ const courseSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  items: [],
-  zipCode: {
+  maxStudents: { // 最大学生数？
     type: Number,
-    min: [10000, '桁数が足りません'],
-    max: 99999
+    default: 0,
+    min: [0, "Course cannot have a negative number of students"] // デフォルトは0で、負の数は持てない
+  },
+  cost: {
+    type: Number,
+    default: 0,
+    min: [0, "コースは、コスト設定にマイナスを設定できません"]
   }
-});
+},
+{
+  timestamps: true
+}
+);
 
 module.exports = mongoose.model('Course', courseSchema);
 

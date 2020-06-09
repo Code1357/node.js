@@ -2,6 +2,15 @@
 
 const Subscriber = require('../models/subscriber');
 
+// カスタム関数を作って、リクエストから購読者のデータを取り出す
+getSubscriberParams = body => {
+  return {
+    name: body.name,
+    email: body.email,
+    zipCode: parseInt(body.zipCode)
+  };
+};
+
 module.exports = {
   index: (req, res, next) => {
     Subscriber.find({})
@@ -21,7 +30,7 @@ module.exports = {
   },
 
   // 購読者情報をDBに保存する
-  saveSubscriber: (req, res) => {
+  /* saveSubscriber: (req, res) => {
     let newSubscriber = new Subscriber({
       name: req.body.name,
       email: req.body.email,
@@ -36,7 +45,7 @@ module.exports = {
       .catch(error => {
         if (error) res.send(error);
       });
-  },
+  }, */
   new: (req, res) => {
     res.render("subscribers/new");
   },

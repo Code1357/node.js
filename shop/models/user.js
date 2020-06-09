@@ -7,7 +7,7 @@ const Subscriber = require('./subscriber');
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
   {
-    // ファーストネームとラストネームのプロパティ
+    // ファーストネームとラストネームのプロパティ(属性を加える)
     name: {
       first: {
         type: String,
@@ -32,7 +32,7 @@ const userSchema = new Schema(
     // パスワードのプロパティを追加
     password: {
       type: String,
-      required: true
+      required: true// パスワード必須
     },
     // ユーザーをコースに繋げるコールプロパティを追加([]で配列にしている)
     courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
@@ -46,11 +46,13 @@ const userSchema = new Schema(
 );
 
 // ユーザーのフルネームを取得する仮想属性を追加,DBに保存はしないが、取得したり設定したりできる('fullName'にする)
+// 仮想属性のおかげで、バラバラに入力したものを１つにまとめて出力する事ができる
 userSchema.virtual('fullName').get(function () {
   return `${this.name.first} ${this.name.last}`;
 });
 
 // pre(mongooseのメソッドでフックという):saveを実行する前,の意味(ユーザーの作成と保存の直前に実行される)つまり、実行タイミングを制御してるって事？,参考：https://mongoosejs.com/docs/middleware.html#pre
+// pre,データベースに保存する直前に実行となる
 userSchema.pre("save", function(next) { 
   let user = this; // 登録しようとしてる情報(console.logで確認できる)
   // 既に購読者との関連があるのかをチェック

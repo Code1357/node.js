@@ -1,9 +1,9 @@
 'use strict';
 
 module.exports = {
-  getSubscriptionPage: (req, res) => { // 2
+  /* getSubscriptionPage: (req, res) => { // 2
     res.render('contact');
-  },
+  }, */
   index: (req, res) => { // 1
     res.render('index');
   },
