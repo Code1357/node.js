@@ -24,7 +24,7 @@ module.exports = {
   },
   // ユーザの登録内容をDBに保存するために情報を作るアクション
   // new.ejsから受け取ったデータを次のミドルウエア関数のredirectViewに渡す
- /*  create: (req, res, next) => { // 5
+  create: (req, res, next) => { // 5
     let userParams = {
       name: {
         first: req.body.first,　// .firstはejsで設定したname属性
@@ -33,9 +33,8 @@ module.exports = {
       email: req.body.email,
       password: req.body.password,
       zipCode: req.body.zipCode
-    }; */
-    create: (req, res, next) => {
-      let userParams = getUserParams(req.body);
+    };
+      // let userParams = getUserParams(req.body);　, getUserParams不明、自作メソッド？
     // 上記変数createをUserモデルで受け取る
     User.create(userParams) // Userモデル
       .then(user => {
@@ -94,7 +93,15 @@ module.exports = {
   update: (req, res, next) => {
     let userId = req.params.id,
       // ユーザーのパラメータをリクエストから収集する
-      userParams = getUserParams(req.body); // getUserParams???
+      userParams = {
+        name: {
+          first: req.body.first,
+          last: req.body.last
+        },
+        email: req.body.email,
+        password: req.body.password,
+        zipCode: req.body.zipCode
+      };// getUserParams???
       // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
     User.findByIdAndUpdate(userId, { // findByIdAndUpdat:mongooseのメソッド(ドキュメントを置き換え),参考：https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
       $set: userParams // $setを使って、指定したIDと続くパラメータを受け取る
