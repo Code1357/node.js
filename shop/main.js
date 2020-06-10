@@ -11,7 +11,9 @@ const subscribersController = require('./controllers/subscribersController');
 const usersController = require("./controllers/usersController");
 const coursesController = require("./controllers/coursesController");
 const methodOverride = require("method-override");
-// const Subscriber = require("./models/subscriber");
+
+const expressSession = require('express-session');
+const cookieParser = require('cookie-parser');
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
@@ -39,22 +41,33 @@ app.set('view engine', 'ejs');
 
 mongoose.set('useFindAndModify', false); // findOneAndUpdate()を使う時は、これをセット必須,セットしないと非推奨となる
 
-router.use(methodOverride("_method", { // method-overrideを処理,アプリケーションルータを設定(クエリパラメータ_methodを見つけたら、指定されたmethodを解釈する。例)?_method=PUT)
-  methods: ["POST", "GET"]
-})
-);
+// method-overrideを処理,アプリケーションルータを設定(クエリパラメータ_methodを見つけたら、指定されたmethodを解釈する。例)?_method=PUT)
+router.use(methodOverride("_method", {methods: ["POST", "GET"]}));
 
 router.use(layouts); // ミドルウェア関数として、express-ejs-layoutsを使用
 router.use(express.static('public')); // 静的ファイルの供給を可能にするコード
 
 // HTTPリクエストのバッファルトリームをエンコードする（urlエンコードの本体の解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
-router.use(
-  express.urlencoded({
-    extended: false
-  })
-);
+router.use(express.urlencoded({extended: false}));
 router.use(express.json()); // リクエストのJSON本体を解析する
 router.use(homeController.logRequestPaths); //自作ミドルウェア関数？？？
+
+router.use(cookieParser('secret_passcode')); // 選択した秘密のパスコードを使う。事と、expressに知らせている
+router.use(expressSession({ // 
+  secret: 'secret_passcpde', // 必須オプション
+  cookie: {
+    maxAge: 4000000 // 4万ミリ秒(約1時間でクッキーを期限切れにする)
+  },
+resave: false, // 基本的にはfalse
+saveUninitialized: false // セッションにメッセージを追加しない限りクッキーをユーザーに送らないようにする
+}));
+router.use(connectFlash()); // フラッシュメッセージがセッションに保存される
+// cookie-parser参考：https://www.npmjs.com/package/cookie-parser
+// express-session,参考：https://www.npmjs.com/package/express-session
+// connect-flash,参考：https://www.npmjs.com/package/connect-flash , Express 3.までしか対応してない？
+// connect-flash,参考：https://qiita.com/t_n/items/5409422e8477475fa665 , Express 4.以降に使う場合
+
+
 
 // 下記から、getとpostの経路(ルーティングパスを記入)
 router.get('/', homeController.index); /*1*/
