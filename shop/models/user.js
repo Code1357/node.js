@@ -53,7 +53,7 @@ userSchema.virtual('fullName').get(function () {
 
 // pre(mongooseのメソッドでフックという):saveを実行する前,の意味(ユーザーの作成と保存の直前に実行される)つまり、実行タイミングを制御してるって事？,参考：https://mongoosejs.com/docs/middleware.html#pre
 // pre,データベースに保存する直前に実行となる
-userSchema.pre("save", function(next) { 
+userSchema.pre("save", function (next) {
   let user = this; // 登録しようとしてる情報(console.logで確認できる)
   // 既に購読者との関連があるのかをチェック
   if (user.subscribedAccount === undefined) { // user.subscribedAccountに一致するemail情報が無ければ（あってるか不明？？？）
@@ -62,7 +62,7 @@ userSchema.pre("save", function(next) {
       email: user.email // 登録しようとしているuserのemailと
     })
       .then(subscriber => { // 一致していたら
-        user.subscribedAccount = subscriber; 
+        user.subscribedAccount = subscriber;
         next();
       })
       .catch(error => {

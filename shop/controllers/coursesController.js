@@ -2,9 +2,18 @@
 
 const Course = require("../models/course");
 
+const getCourseParams = body => {
+  return {
+    title: body.title,
+    description: body.description,
+    maxStudents: body.maxStudents,
+    cost: body.cost
+  };
+};
+
 module.exports = {
   index: (req, res, next) => {
-    Course.find({})
+    Course.find()
       .then(courses => {
         res.locals.courses = courses;
         next();
@@ -22,12 +31,7 @@ module.exports = {
   },
 
   create: (req, res, next) => {
-    let courseParams = {
-      title: req.body.title,
-      description: req.body.description,
-      items: [req.body.items.split(",")],
-      zipCode: req.body.zipCode
-    };
+    let courseParams = getCourseParams(req.body);
     Course.create(courseParams)
       .then(course => {
         res.locals.redirect = "/courses";
@@ -72,14 +76,8 @@ module.exports = {
   },
 
   update: (req, res, next) => {
-    let courseId = req.params.id,
-      courseParams = {
-        title: req.body.title,
-        description: req.body.description,
-        items: [req.body.items.split(",")],
-        zipCode: req.body.zipCode
-      };
-
+    let courseId = req.params.id;
+    let courseParams = getCourseParams(req.body);
     Course.findByIdAndUpdate(courseId, {
       $set: courseParams
     })

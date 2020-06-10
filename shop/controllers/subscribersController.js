@@ -3,17 +3,18 @@
 const Subscriber = require('../models/subscriber');
 
 // カスタム関数を作って、リクエストから購読者のデータを取り出す
-getSubscriberParams = body => {
+// 参考：https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+const getSubscriberParams = (body) => {
   return {
     name: body.name,
     email: body.email,
-    zipCode: parseInt(body.zipCode)
+    zipCode: parseInt(body.zipCode) // 文字列->整数へ変換
   };
 };
 
 module.exports = {
-  index: (req, res, next) => {
-    Subscriber.find({})
+  index: (req, res, next) => { // indexアクション：購読者全員のドキュメントを探し出す
+    Subscriber.find()
       // インデックスページにユーザー配列を表示させる
       .then(subscribers => {
         res.locals.subscribers = subscribers;
@@ -49,12 +50,13 @@ module.exports = {
   new: (req, res) => {
     res.render("subscribers/new");
   },
-  create: (req, res, next) => {
-    let subscriberParams = {
-      name: req.body.name,
-      email: req.body.email,
-      zipCode: req.body.zipCode
-    };
+  create: (req, res, next) => { // createアクション：新規購読者作成
+    let subscriberParams = getSubscriberParams(req.body);
+    /*  {
+       name: req.body.name,
+       email: req.body.email,
+       zipCode: req.body.zipCode
+     }; */
     Subscriber.create(subscriberParams)
       .then(subscriber => {
         res.locals.redirect = "/subscribers";
@@ -67,7 +69,7 @@ module.exports = {
       });
   },
 
-  show: (req, res, next) => {
+  show: (req, res, next) => { //showアクション：購読者のデータを表示する
     let subscriberId = req.params.id;
     Subscriber.findById(subscriberId)
       .then(subscriber => {
@@ -84,7 +86,7 @@ module.exports = {
     res.render("subscribers/show");
   },
 
-  edit: (req, res, next) => {
+  edit: (req, res, next) => { // editアクション：購読者データの編集を行う
     let subscriberId = req.params.id;
     Subscriber.findById(subscriberId)
       .then(subscriber => {
@@ -98,15 +100,16 @@ module.exports = {
       });
   },
 
-  update: (req, res, next) => {
-    let subscriberId = req.params.id,
-      subscriberParams = {
-        name: req.body.name,
-        email: req.body.email,
-        zipCode: req.body.zipCode
-      };
+  update: (req, res, next) => { // updateアクション：既存購読者のドキュメントの値を更新する
+    let subscriberId = req.params.id;
+    let subscriberParams = getSubscriberParams(req.body);
+    /* {
+      name: req.body.name,
+      email: req.body.email,
+      zipCode: req.body.zipCode
+    }; */
 
-    Subscriber.findByIdAndUpdate(subscriberId, {
+    Subscriber.findByIdAndUpdate(subscriberId, { // 既存の購読者を探す
       $set: subscriberParams
     })
       .then(subscriber => {
@@ -120,7 +123,7 @@ module.exports = {
       });
   },
 
-  delete: (req, res, next) => {
+  delete: (req, res, next) => { // deleteアクション：購読者のドキュメントを削除
     let subscriberId = req.params.id;
     Subscriber.findByIdAndRemove(subscriberId)
       .then(() => {
@@ -132,10 +135,13 @@ module.exports = {
         next();
       });
   },
-  
+
   redirectView: (req, res, next) => {
     let redirectPath = res.locals.redirect;
     if (redirectPath !== undefined) res.redirect(redirectPath);
     else next();
   }
 };
+
+
+// find()だとドキュメンよ前検索/find({})だと、{}の中に検索したいものを指定し検索する,参考：https://mongoosejs.com/docs/api.html#model_Model.find

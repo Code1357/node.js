@@ -34,7 +34,7 @@ module.exports = {
       password: req.body.password,
       zipCode: req.body.zipCode
     };
-      // let userParams = getUserParams(req.body);　, getUserParams不明、自作メソッド？
+    // let userParams = getUserParams(req.body);　, getUserParams不明、自作メソッド？
     // 上記変数createをUserモデルで受け取る
     User.create(userParams) // Userモデル
       .then(user => {
@@ -102,7 +102,7 @@ module.exports = {
         password: req.body.password,
         zipCode: req.body.zipCode
       };// getUserParams???
-      // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
+    // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
     User.findByIdAndUpdate(userId, { // findByIdAndUpdat:mongooseのメソッド(ドキュメントを置き換え),参考：https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
       $set: userParams // $setを使って、指定したIDと続くパラメータを受け取る(ここには、変更後の値が入る)
     })

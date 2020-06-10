@@ -11,7 +11,7 @@ const subscribersController = require('./controllers/subscribersController');
 const usersController = require("./controllers/usersController");
 const coursesController = require("./controllers/coursesController");
 const methodOverride = require("method-override");
-const Subscriber = require("./models/subscriber");
+// const Subscriber = require("./models/subscriber");
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 

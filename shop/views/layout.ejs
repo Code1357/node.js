@@ -7,38 +7,33 @@
   <link rel="stylesheet" href="/css/bootstrap.css">
 	<link rel="stylesheet" href="/css/recipe_app.css">
 </head>
-<body>
-  
-</body>
-</html>
 
 <%# body置き換えの共有ページ %>
-<header>
-  <ul>
-    <li class="menu"><a href="http://localhost:3000/courses" class="link">お料理のコース</a></li>
-    <li class="menu"><a href="http://localhost:3000/contact" class="link">連絡先登録</a></li>
-  </ul>
-</header>
-
-<div id="nav">
+<body>
+	<div id="nav">
 		<div class="col-sm nav-align">
-			<h1 id="title">レシピ App</h1>
+			<h1 id="title">Confetti Cuisine</h1>
 		</div>
 		<div class="col-sm nav-align">
 			<a href="/"> <!--パス指定でリンク貼れるのね-->
 				<span class="button">Home</span>
 			</a>
 			<a href="/courses">
-				<span class="button">お料理のコース</span>
+				<span class="button">Courses</span>
 			</a>
-			<a href="/contact">
-				<span class="button">連絡先登録</span>
+			<a href="/subscribers/new">
+				<span class="button">Contact</span>
+			</a>
+			<a href="/users">
+				<span class="button">Users</span>
 			</a>
 		</div>
 	</div>
 
-<%- body %>
+	<div class="container">
+		<%- body %>
+	</div>
 
-<footer>
-  <li>site_map</li>
-</footer>
+</body>
+
+</html>
