@@ -1,6 +1,19 @@
 'use strict';
 
 const User = require('../models/user');
+const { ResumeToken } = require('mongodb');
+
+const getUserParams = body => {
+  return {
+    name: {
+      first: body.first,
+      last: body.last
+    },
+    email: body.email,
+    password: body.password,
+    zipCode: body.zipCode
+  };
+};
 
 module.exports = {
   index: (req, res, next) => { // 3(DBの中身を検索して表示させる)
@@ -16,7 +29,11 @@ module.exports = {
       });
   },
   indexView: (req, res) => { // 3.1(index.ejsを表示するだけ)
-    res.render('users/index');
+    res.render('users/index'/* , {
+      flashMessages: {　
+        success: 'アカウントを作成したぜ！' // フラッシュメッセを設定できる
+      }
+    } */);
   },
   // フォームを表示させるアクション
   new: (req, res) => { // 4
@@ -25,7 +42,8 @@ module.exports = {
   // ユーザの登録内容をDBに保存するために情報を作るアクション
   // new.ejsから受け取ったデータを次のミドルウエア関数のredirectViewに渡す
   create: (req, res, next) => { // 5
-    let userParams = {
+    let userParams = getUserParams(req.body);
+   /*  {
       name: {
         first: req.body.first,　// .firstはejsで設定したname属性
         last: req.body.last
@@ -33,18 +51,25 @@ module.exports = {
       email: req.body.email,
       password: req.body.password,
       zipCode: req.body.zipCode
-    };
-    // let userParams = getUserParams(req.body);　, getUserParams不明、自作メソッド？
+    }; */
+    
     // 上記変数createをUserモデルで受け取る
     User.create(userParams) // Userモデル
       .then(user => {
+        // 成功した事をフラッシュメッセージで知らせる
+        req.flash('success', `${user.fullName}のアカウントは無事に作成されました`);
         res.locals.redirect = '/users'; // redirect:ページの転送
         res.locals.user = user; // この行のコード???  // localsも???
         next();
       })
       .catch(error => {
         console.log(`Error ユーザの情報は保存できませんでした ${error.message}`);
-        next(error);
+        res.locals.redirect = '/users/new'; // 失敗時の転送
+        // 失敗時のフラッシュメッセージ
+        req.flash(
+          'error'/*eroror-handler*/, `ユーザーアカウントの作成に失敗しました${error.message}` // ${error.message}は場面に応じた内容のerrorを返えしてくれる
+        );
+        next();
       });
   },
   // ビューの表示は、redirectViewアクションで別に行う(createアクションから引き継ぐ)
@@ -91,9 +116,10 @@ module.exports = {
 
   // 更新のアクション
   update: (req, res, next) => {
-    let userId = req.params.id, // ローカル変数
+    let userId = req.params.id; // ローカル変数
       // ユーザーのパラメータをリクエストから収集する
-      userParams = { //　更新させたいフィールド？？
+      let userParams = getUserParams(req.body);
+      /* { //　更新させたいフィールド？？
         name: {
           first: req.body.first,
           last: req.body.last
@@ -101,13 +127,15 @@ module.exports = {
         email: req.body.email,
         password: req.body.password,
         zipCode: req.body.zipCode
-      };// getUserParams???
+      }; */
+
     // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
     User.findByIdAndUpdate(userId, { // findByIdAndUpdat:mongooseのメソッド(ドキュメントを置き換え),参考：https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
       $set: userParams // $setを使って、指定したIDと続くパラメータを受け取る(ここには、変更後の値が入る)
     })
       .then(user => {
         // ローカル変数としてレスポンスに追加
+        req.flash('success', `${user.fullName}の内容を更新しました`);
         res.locals.redirect = `/users/${userId}`; // ローカル変数を格納,該当のIDを埋め込む
         res.locals.user = user; // undefined
         next();
@@ -121,6 +149,7 @@ module.exports = {
     let userId = req.params.id;
     User.findByIdAndRemove(userId) // 該当のユーザーIDを見つけて、削除のメソッドを実行してIDそのものを削除
       .then(() => {
+        req.flash('success', `削除しました`);
         res.locals.redirect = "/users"; // ローカルファイルに転送
         next();
       })
@@ -128,7 +157,37 @@ module.exports = {
         console.log(`Error 該当のユーザーを削除できませんでした: ${error.message}`);
         next();
       });
-  }
+  },
+  login: (req, des) => {
+    res.render('user/login');
+  },
+    // authenticate(オーセンターケイト)
+    authenticate: (req, res, next) => {
+      User.findOne({ email: req.body.email })
+        .then(user => {
+          if (user) {
+            user.passwordComparison(req.body.password).then(passwordsMatch => {
+              if (passwordsMatch) {
+                res.locals.redirect = `/users/${user._id}`;
+                req.flash("success", `${user.fullName}'s logged in successfully!`);
+                res.locals.user = user;
+              } else {
+                req.flash("error", "Failed to log in user account: Incorrect Password.");
+                res.locals.redirect = "/users/login";
+              }
+              next();
+            });
+          } else {
+            req.flash("error", "Failed to log in user account: User account not found.");
+            res.locals.redirect = "/users/login";
+            next();
+          }
+        })
+        .catch(error => {
+          console.log(`Error logging in user: ${error.message}`);
+          next(error);
+        });
+    }
 };
 
 

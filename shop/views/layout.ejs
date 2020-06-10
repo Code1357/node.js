@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>レシピ App</title>
-  <link rel="stylesheet" href="/css/bootstrap.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>レシピ App</title>
+	<link rel="stylesheet" href="/css/bootstrap.css">
 	<link rel="stylesheet" href="/css/recipe_app.css">
 </head>
 
 <%# body置き換えの共有ページ %>
+
 <body>
 	<div id="nav">
 		<div class="col-sm nav-align">
-			<h1 id="title">Confetti Cuisine</h1>
+			<h1 id="title">ページ</h1>
 		</div>
 		<div class="col-sm nav-align">
-			<a href="/"> <!--パス指定でリンク貼れるのね-->
+			<a href="/">
+				<!--パス指定でリンク貼れるのね-->
 				<span class="button">Home</span>
 			</a>
 			<a href="/courses">
@@ -28,6 +31,21 @@
 				<span class="button">Users</span>
 			</a>
 		</div>
+	</div>
+
+<%# フラッシュメッセージの表示区域 %> 
+	<div class="flashes">
+		<% if (flashMessages) { %>
+		<% if (flashMessages.success) { %>
+		<div class="flash success">
+			<%= flashMessages.success %>
+		</div>
+		<% } else if (flashMessages.error) { %>
+		<div class="flash error">
+			<%= flashMessages.error %>
+		</div>
+		<% } %>
+		<% } %>
 	</div>
 
 	<div class="container">

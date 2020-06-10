@@ -35,7 +35,7 @@
       </td>
       <td>
       <%# 削除可否のダイアログを表示して、OKなら削除アクションのパスに飛ぶ,return confirm（HTMLの属性） %> 
-      <a href="<%=`/users/${user._id}/delete?_method=DELETE` %>" onclick="return confirm(' <%= user.fullName %> のレコードを本当に削除しても良いですか？')">削除</a>
+      <a href="<%=`/users/${user._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')">削除</a>
       <td>
     </tr>
     <% }); %>

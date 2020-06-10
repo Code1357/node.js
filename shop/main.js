@@ -14,6 +14,7 @@ const methodOverride = require("method-override");
 
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
+const connectFlash = require("connect-flash");
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
@@ -66,7 +67,13 @@ router.use(connectFlash()); // フラッシュメッセージがセッション�
 // express-session,参考：https://www.npmjs.com/package/express-session
 // connect-flash,参考：https://www.npmjs.com/package/connect-flash , Express 3.までしか対応してない？
 // connect-flash,参考：https://qiita.com/t_n/items/5409422e8477475fa665 , Express 4.以降に使う場合
+// *express-sessionモジュールを使う場合、cookie-parserを使う必要はないが、問題が生じる事があるので注意が必要
 
+// フラッシュメッセージを、レスポンスのローカル変数に代入する必要がある
+router.use((req, res, next) => {
+  res.locals.flashMessages = req.flash();
+  next();
+});
 
 
 // 下記から、getとpostの経路(ルーティングパスを記入)
@@ -76,6 +83,8 @@ router.get('/', homeController.index); /*1*/
 router.get('/users', usersController.index /*3*/, usersController.indexView /*3.1*/);
 router.get('/users/new', usersController.new); /*4*/
 router.post('/users/create', usersController.create, /*5*/usersController.redirectView); /*5.1*/
+router.get('/users/login', usersController.login);
+router.post('/user/login', usersController.authenticate,usersController.redirectView); // login時のPOSTリクエスト処理
 router.get('/users/:id/edit', usersController.edit);
 router.put("/users/:id/update", usersController.update, usersController.redirectView); // PUT
 router.delete("/users/:id/delete", usersController.delete, usersController.redirectView); // DELETE
