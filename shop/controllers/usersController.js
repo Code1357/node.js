@@ -1,7 +1,6 @@
 'use strict';
 
 const User = require('../models/user');
-const { ResumeToken } = require('mongodb');
 
 const getUserParams = body => {
   return {
@@ -43,16 +42,16 @@ module.exports = {
   // new.ejsから受け取ったデータを次のミドルウエア関数のredirectViewに渡す
   create: (req, res, next) => { // 5
     let userParams = getUserParams(req.body);
-   /*  {
-      name: {
-        first: req.body.first,　// .firstはejsで設定したname属性
-        last: req.body.last
-      },
-      email: req.body.email,
-      password: req.body.password,
-      zipCode: req.body.zipCode
-    }; */
-    
+    /*  {
+       name: {
+         first: req.body.first,　// .firstはejsで設定したname属性
+         last: req.body.last
+       },
+       email: req.body.email,
+       password: req.body.password,
+       zipCode: req.body.zipCode
+     }; */
+
     // 上記変数createをUserモデルで受け取る
     User.create(userParams) // Userモデル
       .then(user => {
@@ -117,17 +116,17 @@ module.exports = {
   // 更新のアクション
   update: (req, res, next) => {
     let userId = req.params.id; // ローカル変数
-      // ユーザーのパラメータをリクエストから収集する
-      let userParams = getUserParams(req.body);
-      /* { //　更新させたいフィールド？？
-        name: {
-          first: req.body.first,
-          last: req.body.last
-        },
-        email: req.body.email,
-        password: req.body.password,
-        zipCode: req.body.zipCode
-      }; */
+    // ユーザーのパラメータをリクエストから収集する
+    let userParams = getUserParams(req.body);
+    /* { //　更新させたいフィールド？？
+      name: {
+        first: req.body.first,
+        last: req.body.last
+      },
+      email: req.body.email,
+      password: req.body.password,
+      zipCode: req.body.zipCode
+    }; */
 
     // ユーザーをIDで見つけたあと、、ドキュメント レコードの更新も行う
     User.findByIdAndUpdate(userId, { // findByIdAndUpdat:mongooseのメソッド(ドキュメントを置き換え),参考：https://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
@@ -161,29 +160,67 @@ module.exports = {
   login: (req, res) => {
     res.render('users/login');
   },
-    // authenticate(オーセンターケイト),認証のアクション
-    authenticate: (req, res, next) => {
-      User.findOne({ email: req.body.email }) // 該当するユニークなIDを探す
-      .then(user => {
-        if (user && user.password === req.body.password) { // 一致するか比較(DB === Form)
-          res.locals.redirect = `/users/${user._id}`;
-          req.flash("success", `${user.fullName}正常にログインしました`);
-          res.locals.user = user;
-          next();
-        } else {
-          req.flash(
-            "error",
-            `アカウントまたはパスワードが正しくありません。再度お試しいただくか、システム管理者にお問い合わせください。`
-          );
+  // authenticate(オーセンターケイト),認証のアクション
+  authenticate: (req, res, next) => {
+    User.findOne({ email: req.body.email }) // 該当するユニークなIDを1つ探す,見つかったら
+      .then(user => { // 引数userに代入
+        if (user) { // もし、該当するメールが
+          user.passwordComparison(req.body.password).then(passwordsMathc => { // 比較してtrueなら、引数passwordsMathcに代入して(プロミスて待機)
+            if (passwordsMathc) { // trueなら、
+              res.locals.redirect = `/users/${user._id}`; // パスに転送
+              req.flash('success', `${user.fullName}は、正常にログインできました`); // フラッシュメッセージを返す
+              res.locals.user = user;
+            } else {
+              req.flash(
+                "error",
+                `アカウントまたはパスワードが正しくありません。再度お試しいただくか、システム管理者にお問い合わせください。`
+              );
+              res.locals.redirect = "/users/login";
+            }
+            next(); // 次のミドルウェアを呼び出し
+          });
+        } else { // それ以外であれば、
+          req.flash("error", "ユーザーアカウントのログインに失敗しました。ユーザーアカウントが見つかりません.");
           res.locals.redirect = "/users/login";
           next();
         }
       })
-      .catch(error => {
-        console.log(`Error logging in user: ${error.message}`);
+      .catch(error => { // ログ出力し、Expressに知らせる
+        console.log(`ログイン時にエラー発生: ${error.message}`);
         next(error);
       });
-      
+  },
+  // validate関数(ミドルウェアでの新規登録時のチェックを増やす)
+  validate: (req, res, next) => {
+    req
+      .sanitizeBody("email")
+      .normalizeEmail({
+        all_lowercase: true
+      })
+      .trim();
+    req.check("email", "Email is invalid").isEmail();
+    req
+      .check("zipCode", "Zip code is invalid")
+      .notEmpty()
+      .isInt()
+      .isLength({
+        min: 5,
+        max: 5
+      })
+      .equals(req.body.zipCode);
+    req.check("password", "Password cannot be empty").notEmpty();
+
+    req.getValidationResult().then(error => {
+      if (!error.isEmpty()) {
+        let messages = error.array().map(e => e.msg);
+        req.skip = true;
+        req.flash("error", messages.join(" and "));
+        res.locals.redirect = "/users/new";
+        next();
+      } else {
+        next();
+      }
+    });
   }
 };
 

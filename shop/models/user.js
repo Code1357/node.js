@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 // オブジェクトの分割代入, 参照：https://mongoosejs.com/docs/guide.html
 const { Schema } = mongoose;
 const Subscriber = require('./subscriber');
-const { NETWORK_AUTHENTICATION_REQUIRED, REQUEST_URI_TOO_LONG } = require('http-status-codes');
+
+/* const { NETWORK_AUTHENTICATION_REQUIRED, REQUEST_URI_TOO_LONG } = require('http-status-codes');
+ */
+const bcrypt = require('bcrypt');
+
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
   {

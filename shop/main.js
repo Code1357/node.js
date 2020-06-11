@@ -15,7 +15,7 @@ const methodOverride = require("method-override");
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectFlash = require("connect-flash");
-const bcrypt = require('bcrypt');
+const expressValidator = require('express-validator');
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
@@ -76,6 +76,7 @@ router.use((req, res, next) => {
   next();
 });
 
+router.use(expressValidator()); // express-validatorをExpressのミドルウェアで使用する,「express.json」と「express.urlencode」の導入後に記述する必要がある(リクエストの本体を検証の前に解析しておく必要があるため)+++はたして必要なのか？？？？
 
 // 下記から、getとpostの経路(ルーティングパスを記入)
 router.get('/', homeController.index); /*1*/
@@ -83,7 +84,7 @@ router.get('/', homeController.index); /*1*/
 
 router.get('/users', usersController.index /*3*/, usersController.indexView /*3.1*/);
 router.get('/users/new', usersController.new); /*4*/
-router.post('/users/create', usersController.create, /*5*/usersController.redirectView); /*5.1*/
+router.post('/users/create', usersController.validate, usersController.create, /*5*/usersController.redirectView); /*5.1*/
 router.get('/users/login', usersController.login);
 router.post('/users/login', usersController.authenticate,usersController.redirectView); // login時のPOSTリクエスト処理
 router.get('/users/:id/edit', usersController.edit);
