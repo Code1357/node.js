@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 // オブジェクトの分割代入, 参照：https://mongoosejs.com/docs/guide.html
 const { Schema } = mongoose;
 const Subscriber = require('./subscriber');
+const { NETWORK_AUTHENTICATION_REQUIRED, REQUEST_URI_TOO_LONG } = require('http-status-codes');
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
   {
@@ -75,6 +76,29 @@ userSchema.pre("save", function (next) {
     next();
   }
 });
+
+// ユーザースキーマにpreフックを追加(ミドルウェア)
+userSchema.pre('save', function(next) {
+  let user = this;
+  // ユーザーのパスワードにハッシュをかける
+  // 参考:https://www.npmjs.com/package/bcrypt
+  bcrypt.hash(user.password, 10).then(hash => { // bcrypt.hash(),ハッシュ化
+    user.password = hash; // ハッシュ化されたものを格納する,this文脈が失われるのでハッシュ関数からアクセスできるように変数に保存している
+    next(); // nextを呼び出して、該当するユーザがDBに保存される
+  })
+  .catch(error => {
+    console.log(`パスワードのハッシュ化でエラー発生： ${error.message}`);
+    next(error);
+  })
+});
+
+// ハッシュをかけたpスワード2つを比較する関数を定義(インスタンスメソッド？/passwordComparisonは、関数名)
+// 参考:https://www.npmjs.com/package/bcrypt
+userSchema.methods.passwordComparison = function(inputPassword) {
+  let user = this;
+  // ユーザーのパスワードと保存されているパスワードを比較する
+  return bcrypt.compare(inputPassword, user.password); // チェック(入力Pass === user.password,ハッシュ化されたPass)
+};
 
 module.exports = mongoose.model('User', userSchema)
 

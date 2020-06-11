@@ -15,6 +15,7 @@ const methodOverride = require("method-override");
 const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectFlash = require("connect-flash");
+const bcrypt = require('bcrypt');
 
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
@@ -84,7 +85,7 @@ router.get('/users', usersController.index /*3*/, usersController.indexView /*3.
 router.get('/users/new', usersController.new); /*4*/
 router.post('/users/create', usersController.create, /*5*/usersController.redirectView); /*5.1*/
 router.get('/users/login', usersController.login);
-router.post('/user/login', usersController.authenticate,usersController.redirectView); // login時のPOSTリクエスト処理
+router.post('/users/login', usersController.authenticate,usersController.redirectView); // login時のPOSTリクエスト処理
 router.get('/users/:id/edit', usersController.edit);
 router.put("/users/:id/update", usersController.update, usersController.redirectView); // PUT
 router.delete("/users/:id/delete", usersController.delete, usersController.redirectView); // DELETE

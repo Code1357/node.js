@@ -158,36 +158,33 @@ module.exports = {
         next();
       });
   },
-  login: (req, des) => {
-    res.render('user/login');
+  login: (req, res) => {
+    res.render('users/login');
   },
-    // authenticate(オーセンターケイト)
+    // authenticate(オーセンターケイト),認証のアクション
     authenticate: (req, res, next) => {
-      User.findOne({ email: req.body.email })
-        .then(user => {
-          if (user) {
-            user.passwordComparison(req.body.password).then(passwordsMatch => {
-              if (passwordsMatch) {
-                res.locals.redirect = `/users/${user._id}`;
-                req.flash("success", `${user.fullName}'s logged in successfully!`);
-                res.locals.user = user;
-              } else {
-                req.flash("error", "Failed to log in user account: Incorrect Password.");
-                res.locals.redirect = "/users/login";
-              }
-              next();
-            });
-          } else {
-            req.flash("error", "Failed to log in user account: User account not found.");
-            res.locals.redirect = "/users/login";
-            next();
-          }
-        })
-        .catch(error => {
-          console.log(`Error logging in user: ${error.message}`);
-          next(error);
-        });
-    }
+      User.findOne({ email: req.body.email }) // 該当するユニークなIDを探す
+      .then(user => {
+        if (user && user.password === req.body.password) { // 一致するか比較(DB === Form)
+          res.locals.redirect = `/users/${user._id}`;
+          req.flash("success", `${user.fullName}正常にログインしました`);
+          res.locals.user = user;
+          next();
+        } else {
+          req.flash(
+            "error",
+            `アカウントまたはパスワードが正しくありません。再度お試しいただくか、システム管理者にお問い合わせください。`
+          );
+          res.locals.redirect = "/users/login";
+          next();
+        }
+      })
+      .catch(error => {
+        console.log(`Error logging in user: ${error.message}`);
+        next(error);
+      });
+      
+  }
 };
 
 
