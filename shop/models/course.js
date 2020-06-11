@@ -1,7 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose'); //  ?
+// mongooseの中にあるオブジェクトSchemaを、同じ名前定数Schemaにインポートした上で、代入している
+const { Schema } = require('mongoose');
 
 const courseSchema = new Schema(
   {

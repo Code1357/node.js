@@ -69,3 +69,55 @@ const showCourses =  (req, res) => {
 </form>
 
  */
+
+
+
+/* validator 
+
+// validate関数(ミドルウェアでの新規登録時のチェックを増やす)
+  validate: (req, res, next) => {
+    // あらかじめ決めた規則に置き換える(Sanitizers)
+    body("email") // emmailフィールドをサニタイズしますよ宣言,sanitize(fields)と一緒
+      .normalizeEmail({ // express-validatorのnormalizeEmailメソッド
+        all_lowercase: true // @マーク前を小文字に変換する
+      })
+      .trim(); // express-validatorのtrimメソッド,左右両側の空白を除去する
+    // あらかじめ決めた規則を守れているかチェックする(Validators)
+    check("email", "メールが無効です") // checkでフィールドを検証する
+      .isEmail(); // 文字列がメールがどうかチェック
+    check("zipCode", "郵便番号が無効です")
+      .notEmpty() // 値が空でないかどうかをチェック
+      .isInt() // 文字列が整数であるかどうかをチェック
+      .isLength({ // 文字列の長さが範囲内であるかをチェック
+        min: 5,
+        max: 5
+      })
+      .equals(req.body.zipCode); // 文字列かどうかチェック???
+    check("password", "パスワードを空にする事はできません").notEmpty();
+    (req, res) => {
+      validationResult(req).then(error => { // ValidationResult(検証エラーを抽出して結果をオブジェクトで利用できるようにする,これまでの検証結果を集めてエラー結果に基づいていてアクション実施)
+        if (!error.isEmpty()) { // もしエラーであれば、
+          let messages = error.array().map(e => e.msg);
+          req.skip = true; // create処理をスキップするかもしれないためのカスタム設定
+          req.flash("error", messages.join(" and ")); // フラッシュメッセージをandで連結して表示
+          res.locals.redirect = "/users/new"; // 新規登録画面に(戻される)転送
+          next();
+        } else {
+          next(); // そうでなければ、createのミドルウェア関数を実行の流れ
+        }
+      });
+    }
+  }
+
+
+
+ // router.use(expressValidator()); // express-validatorをExpressのミドルウェアで使用する,「express.json」と「express.urlencode」の導入後に記述する必要がある(リクエストの本体を検証の前に解析しておく必要があるため)+++はたして必要なのか？？？？
+
+
+const expressValidator = require('express-validator');
+
+router.use(expressValidator()); 
+// express-validatorをExpressのミドルウェアで使用する,「express.json」と「express.urlencode」の導入後に記述する必要がある(リクエストの本体を検証の前に解析しておく必要があるため)+++はたして必要なのか？？？？
+
+
+ */
