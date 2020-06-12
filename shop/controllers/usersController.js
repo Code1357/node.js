@@ -3,6 +3,8 @@
 const User = require('../models/user');
 // const expressValidator = require('express-validator');
 // const { check, validationResult, body } = require('express-validator');
+const passport = require('passport'); // ログイン認証のためにuserControllerで必要
+
 
 const getUserParams = body => {
   return {
@@ -46,13 +48,14 @@ module.exports = {
     // if (req.skip) next(); //validateでエラーだった場合、カスタムのre.skipを発動して次のミドルウェア関数を実行する(以下、createの実行を飛ばす)
 
     let newUser = new User(getUserParams(req.body));
-    User.register(newUser, req.body.password, (error, user) => {
-      if (user) {
-        req.flash("success", `${user.fullName}'s account created successfully!`);
+    // 新規ユーザーを登録
+    User.register(newUser, req.body.password, (error, user) => { // register(参考：https://www.npmjs.com/package/passport-local-mongoose)
+      if (user) { // ユーザーの作成に成功
+        req.flash("success", `${user.fullName}のアカウント作成に成功しました`);
         res.locals.redirect = "/users";
         next();
-      } else {
-        req.flash("error", `Failed to create user account because: ${error.message}.`);
+      } else { // ユーザーアカウントの作成はエラーで失敗した
+        req.flash("error", `ユーザーアカウントの作成に失敗しました: ${error.message}.`);
         res.locals.redirect = "/users/new";
         next();
       }
@@ -179,8 +182,8 @@ module.exports = {
   login: (req, res) => {
     res.render('users/login');
   },
-  // authenticate(オーセンターケイト),認証のアクション
-  authenticate: (req, res, next) => {
+  // authenticate(オーセンターケイト),認証のアクション, passportの仕様に置き換えるため削除が必要
+  /* authenticate: (req, res, next) => {
     User.findOne({ email: req.body.email }) // 該当するユニークなIDを1つ探す,見つかったら
       .then(user => { // 引数userに代入
         if (user) { // もし、該当するメールが
@@ -207,8 +210,19 @@ module.exports = {
       .catch(error => { // ログ出力し、Expressに知らせる
         console.log(`ログイン時にエラー発生: ${error.message}`);
         next(error);
-      });
-  },
+      }); */
+
+      
+  // passportのローカルストラテジーでユーザーを認証
+  // 参考：http://www.passportjs.org/docs/other-api/
+  authenticate: passport.authenticate("local", { // authenticate(リクエストの認証をこれ一つで行う)
+    failureRedirect: "/users/login", // 失敗時の転送
+    failureFlash: "ログインに失敗しました.", // 失敗フラッシュメッセ
+    successRedirect: "/", // 成功時の転送先
+    successFlash: "ログインに成功しました" // 成功フラッシュメッセ
+  }),
+
+
   // validate関数(ミドルウェアでの新規登録時のチェックを増やす)
   /* validate: (req, res, next) => {
     // あらかじめ決めた規則に置き換える(Sanitizers)
@@ -243,6 +257,7 @@ module.exports = {
       });
     }
   } */
+
 };
 
 /* validator

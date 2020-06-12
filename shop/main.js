@@ -16,7 +16,7 @@ const expressSession = require('express-session');
 const cookieParser = require('cookie-parser');
 const connectFlash = require("connect-flash");
 
-const passport = require("passport");
+const passport = require("passport"); // passoport読み込み
 const User = require("./models/user");
 
 
@@ -58,8 +58,8 @@ router.use(express.json()); // リクエストのJSON本体を解析する
 router.use(homeController.logRequestPaths); //自作ミドルウェア関数？？？
 
 router.use(cookieParser('secret_passcode')); // 選択した秘密のパスコードを使う。事と、expressに知らせている
-router.use(expressSession({ // 
-  secret: 'secret_passcpde', // 必須オプション
+router.use(expressSession({ // passport群より先に設定が必要
+  secret: 'secret_passcode', // 必須オプション
   cookie: {
     maxAge: 4000000 // 4万ミリ秒(約1時間でクッキーを期限切れにする)
   },
@@ -73,18 +73,24 @@ router.use(connectFlash()); // フラッシュメッセージがセッション�
 // connect-flash,参考：https://qiita.com/t_n/items/5409422e8477475fa665 , Express 4.以降に使う場合
 // *express-sessionモジュールを使う場合、cookie-parserを使う必要はないが、問題が生じる事があるので注意が必要
 
-// フラッシュメッセージを、レスポンスのローカル変数に代入する必要がある
+
+router.use(passport.initialize()); // passport初期化(フラッシュメッセの前に設置)
+router.use(passport.session()); // Expressのセッションを使うようにpassportを設定する(フラッシュメッセの前に設置)
+
+// (⇩passport-local-mongooseに必要)
+passport.use(User.createStrategy()); // Userのログインストラテジーを設定
+passport.serializeUser(User.serializeUser()); // ユーザーデータのリシアライズをpassportを設定する
+passport.deserializeUser(User.deserializeUser()); // ユーザーデータのデシリアライズをpassportを設定する
+
+
+
+// レスポンスのローカル変数に代入して、レスポンスで使えるようにする(ログイン時)
 router.use((req, res, next) => {
-  res.locals.flashMessages = req.flash();
+  res.locals.loggedIn = req.isAuthenticated(); // passportのログイン状態をloggeIn変数に設定(ローカル環境で使うための変数),isAuthenticated???(Passport.jsが提供しているメソッドらしい)リクエストのクッキーに既存のユーザーが格納されていれば「true」を返す,なければ「false」を返す(ログイン状態をチェック)
+  res.locals.currentUser = req.user; // ログインしたユーザーをcurrentUserに設定(つまり、誰がログインしたかを示す事が可能となる)
+  res.locals.flashMessages = req.flash(); // フラッシュメッセを、レスポンスのローカル変数に設定,flash()???
   next();
 });
-
-
-router.use(passport.initialize());
-router.use(passport.session());
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 
 
@@ -95,7 +101,7 @@ router.get('/contact', homeController.getSubscriptionPage); /*2*/
 router.get('/users', usersController.index /*3*/, usersController.indexView /*3.1*/);
 router.get('/users/new', usersController.new); /*4*/
 router.post('/users/create', /* usersController.validate */ usersController.create, /*5*/usersController.redirectView); /*5.1*/
-router.get('/users/login', usersController.login);
+// router.get('/users/login', usersController.login);
 router.get("/users/login", usersController.login); // なぜ二つあるのか？？？
 router.post('/users/login', usersController.authenticate,usersController.redirectView); // login時のPOSTリクエスト処理
 router.get('/users/:id/edit', usersController.edit);

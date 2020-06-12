@@ -9,7 +9,7 @@ const Subscriber = require('./subscriber');
  */
 const bcrypt = require('bcrypt');
 
-const passportLocalMongoose = require("passport-local-mongoose");
+const passportLocalMongoose = require("passport-local-mongoose");　// 認証アクションを構築する前に読み込み必要
 
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
@@ -36,7 +36,7 @@ const userSchema = new Schema(
       min: [10000, '桁数が足りません'],
       max: 99999
     },
-    // パスワードのプロパティを追加
+    // パスワードのプロパティを追加(passport-local-mongooseのpluginのおかげで削除できる)
     /* password: {
       type: String,
       required: true// パスワード必須
@@ -83,7 +83,7 @@ userSchema.pre("save", function (next) {
   }
 });
 
-/* // ユーザースキーマにpreフックを追加(ミドルウェア)
+/* // ユーザースキーマにpreフックを追加(ミドルウェア),　passportを使うために消す必要がある
 userSchema.pre('save', function(next) {
   let user = this;
   // ユーザーのパスワードにハッシュをかける
@@ -98,14 +98,17 @@ userSchema.pre('save', function(next) {
   })
 }); */
 
-// ハッシュをかけたpスワード2つを比較する関数を定義(インスタンスメソッド？/passwordComparisonは、関数名)
+// ハッシュをかけたpスワード2つを比較する関数を定義(インスタンスメソッド？/passwordComparisonは、関数名), passportを使うために消す必要がある
 // 参考:https://www.npmjs.com/package/bcrypt
 /* userSchema.methods.passwordComparison = function(inputPassword) {
   let user = this;
   // ユーザーのパスワードと保存されているパスワードを比較する
   return bcrypt.compare(inputPassword, user.password); // チェック(入力Pass === user.password,ハッシュ化されたPass)
-}; */
-
+};
+ */
+// passport-local-mongoosepluginをスキーマに追加する
+// 参考：https://mongoosejs.com/docs/plugins.html
+// 参考：https://www.npmjs.com/package/passport-local-mongoose
 userSchema.plugin(passportLocalMongoose, {
   usernameField: "email"
 });
