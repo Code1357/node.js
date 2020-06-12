@@ -2,7 +2,7 @@
 
 const User = require('../models/user');
 // const expressValidator = require('express-validator');
-const { check, validationResult, body } = require('express-validator');
+// const { check, validationResult, body } = require('express-validator');
 
 const getUserParams = body => {
   return {
@@ -30,11 +30,11 @@ module.exports = {
       });
   },
   indexView: (req, res) => { // 3.1(index.ejsを表示するだけ)
-    res.render('users/index'/* , {
+    res.render('users/index', {
       flashMessages: {　
         success: 'アカウントを作成したぜ！' // フラッシュメッセを設定できる
       }
-    } */);
+    });
   },
   // フォームを表示させるアクション
   new: (req, res) => { // 4
@@ -43,9 +43,24 @@ module.exports = {
   // ユーザの登録内容をDBに保存するために情報を作るアクション
   // new.ejsから受け取ったデータを次のミドルウエア関数のredirectViewに渡す
   create: (req, res, next) => { // 5
-    if (req.skip) next(); //validateでエラーだった場合、カスタムのre.skipを発動して次のミドルウェア関数を実行する(以下、createの実行を飛ばす)
-    let userParams = getUserParams(req.body);
-    /*  {
+    // if (req.skip) next(); //validateでエラーだった場合、カスタムのre.skipを発動して次のミドルウェア関数を実行する(以下、createの実行を飛ばす)
+
+    let newUser = new User(getUserParams(req.body));
+    User.register(newUser, req.body.password, (error, user) => {
+      if (user) {
+        req.flash("success", `${user.fullName}'s account created successfully!`);
+        res.locals.redirect = "/users";
+        next();
+      } else {
+        req.flash("error", `Failed to create user account because: ${error.message}.`);
+        res.locals.redirect = "/users/new";
+        next();
+      }
+    });
+  },
+
+    /* let userParams = getUserParams(req.body);
+     {
        name: {
          first: req.body.first,　// .firstはejsで設定したname属性
          last: req.body.last
@@ -53,7 +68,7 @@ module.exports = {
        email: req.body.email,
        password: req.body.password,
        zipCode: req.body.zipCode
-     }; */
+     };
 
     // 上記変数createをUserモデルで受け取る
     User.create(userParams) // Userモデル
@@ -69,11 +84,12 @@ module.exports = {
         res.locals.redirect = '/users/new'; // 失敗時の転送
         // 失敗時のフラッシュメッセージ
         req.flash(
-          'error'/*eroror-handler*/, `ユーザーアカウントの作成に失敗しました${error.message}` // ${error.message}は場面に応じた内容のerrorを返えしてくれる
+          'error', `ユーザーアカウントの作成に失敗しました${error.message}` //'error'(/*eroror-handler), ${error.message}は場面に応じた内容のerrorを返えしてくれる
         );
         next();
       });
-  },
+  }, */
+
   // ビューの表示は、redirectViewアクションで別に行う(createアクションから引き継ぐ)
   redirectView: (req, res, next) => { // 5.1
     let redirectPath = res.locals.redirect;
@@ -137,7 +153,7 @@ module.exports = {
     })
       .then(user => {
         // ローカル変数としてレスポンスに追加
-        req.flash('success', `${user.fullName}の内容を更新しました`);
+        /* req.flash('success', `${user.fullName}の内容を更新しました`); */
         res.locals.redirect = `/users/${userId}`; // ローカル変数を格納,該当のIDを埋め込む
         res.locals.user = user; // undefined
         next();
@@ -151,7 +167,7 @@ module.exports = {
     let userId = req.params.id;
     User.findByIdAndRemove(userId) // 該当のユーザーIDを見つけて、削除のメソッドを実行してIDそのものを削除
       .then(() => {
-        req.flash('success', `削除しました`);
+        /* req.flash('success', `削除しました`); */
         res.locals.redirect = "/users"; // ローカルファイルに転送
         next();
       })
@@ -194,7 +210,7 @@ module.exports = {
       });
   },
   // validate関数(ミドルウェアでの新規登録時のチェックを増やす)
-  validate: (req, res, next) => {
+  /* validate: (req, res, next) => {
     // あらかじめ決めた規則に置き換える(Sanitizers)
     body("email") // emmailフィールドをサニタイズしますよ宣言,sanitize(fields)と一緒
       .normalizeEmail({ // express-validatorのnormalizeEmailメソッド
@@ -226,7 +242,7 @@ module.exports = {
         }
       });
     }
-  }
+  } */
 };
 
 /* validator

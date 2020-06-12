@@ -9,6 +9,8 @@ const Subscriber = require('./subscriber');
  */
 const bcrypt = require('bcrypt');
 
+const passportLocalMongoose = require("passport-local-mongoose");
+
 // ユーザーのスキーマを作る
 const userSchema = new Schema(
   {
@@ -35,10 +37,10 @@ const userSchema = new Schema(
       max: 99999
     },
     // パスワードのプロパティを追加
-    password: {
+    /* password: {
       type: String,
       required: true// パスワード必須
-    },
+    }, */
     // ユーザーをコースに繋げるコールプロパティを追加([]で配列にしている)
     courses: [{ type: Schema.Types.ObjectId, ref: 'Course' }],
     // ユーザを購読者に繋るsubscribedAccountを追加
@@ -81,7 +83,7 @@ userSchema.pre("save", function (next) {
   }
 });
 
-// ユーザースキーマにpreフックを追加(ミドルウェア)
+/* // ユーザースキーマにpreフックを追加(ミドルウェア)
 userSchema.pre('save', function(next) {
   let user = this;
   // ユーザーのパスワードにハッシュをかける
@@ -94,15 +96,19 @@ userSchema.pre('save', function(next) {
     console.log(`パスワードのハッシュ化でエラー発生： ${error.message}`);
     next(error);
   })
-});
+}); */
 
 // ハッシュをかけたpスワード2つを比較する関数を定義(インスタンスメソッド？/passwordComparisonは、関数名)
 // 参考:https://www.npmjs.com/package/bcrypt
-userSchema.methods.passwordComparison = function(inputPassword) {
+/* userSchema.methods.passwordComparison = function(inputPassword) {
   let user = this;
   // ユーザーのパスワードと保存されているパスワードを比較する
   return bcrypt.compare(inputPassword, user.password); // チェック(入力Pass === user.password,ハッシュ化されたPass)
-};
+}; */
+
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: "email"
+});
 
 module.exports = mongoose.model('User', userSchema)
 

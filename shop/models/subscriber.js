@@ -3,8 +3,8 @@
 const mongoose = require('mongoose');
 // スキーマ(設計図)のプロパティを設定/バリデータ(プロパティを規制する)
 // ①const { Schema } = mongoose;を消して、const subscriberSchema = new mongoose.Schema({ でも良い。
-const { Schema } = mongoose;
-const subscriberSchema = new Schema({
+/* const { Schema } = mongoose; */
+const subscriberSchema = new mongoose.Schema({
   name: { // プロパティ
     type: String,
     required: true // 「nameプロパティは必須で型はStringにします」と制約している
@@ -21,19 +21,27 @@ const subscriberSchema = new Schema({
     max: 99999,
     unique: true
   },
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }]
+});
   // ①の設定であればmongoose必要。courses: [{type: mongoose.Schema.Types.ObjectId, ref: 'Course'}
-  courses: [{ type: Schema.Types.ObjectId, ref: 'Course' },] // Courseモデルを参照,ref:リレーションを表現できる,[]参照配列
-},
+  /* courses: [{ type: Schema.Types.ObjectId, ref: 'Course' },]  */// Courseモデルを参照,ref:リレーションを表現できる,[]参照配列
+/* },
   {
     timestamps: true
   }
-);
+); */
 
 
 // 購読者のフルネームを取得するインスタンスメソッドを追加
 // インスタンスメソッド(Schema内で使うメソッド)
 subscriberSchema.methods.getInfo = function () { // getInfo：メソッド名をつけてるだけ(このスキーマ内で、getinfoメソッドを設定する),class GetInfo {}...みたいな感じ
   return `Name: ${this.name} Email: ${this.email} ZipCode: ${this.zipCode}`; // this,自分の(sbscriberSchemaの)
+};
+
+subscriberSchema.methods.findLocalSubscribers = function() {
+  return this.model("Subscriber")
+    .find({ zipCode: this.zipCode })
+    .exec();
 };
 
 // 定義したスキーマをモデルに適用し(設計図名:'Subscriber'),exportする

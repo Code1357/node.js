@@ -2,10 +2,9 @@
 
 const mongoose = require('mongoose');
 // mongooseの中にあるオブジェクトSchemaを、同じ名前定数Schemaにインポートした上で、代入している
-const { Schema } = require('mongoose');
+/* const { Schema } = require('mongoose'); */
 
-const courseSchema = new Schema(
-  {
+const courseSchema = new mongoose.Schema({
     // コースのスキーマにプロパティを追加
     title: {
       type: String,
@@ -16,7 +15,14 @@ const courseSchema = new Schema(
       type: String,
       required: true
     },
-    maxStudents: { // 最大学生数？
+    items: [],
+  zipCode: {
+    type: Number,
+    min: [10000, "Zip code too short"],
+    max: 99999
+  }
+});
+    /* maxStudents: { // 最大学生数？
       type: Number,
       default: 0,
       min: [0, "Course cannot have a negative number of students"] // デフォルトは0で、負の数は持てない
@@ -30,7 +36,7 @@ const courseSchema = new Schema(
   {
     timestamps: true
   }
-);
+); */
 
 module.exports = mongoose.model('Course', courseSchema);
 
