@@ -7,7 +7,7 @@ const Subscriber = require('./subscriber');
 
 /* const { NETWORK_AUTHENTICATION_REQUIRED, REQUEST_URI_TOO_LONG } = require('http-status-codes');
  */
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
 
 const passportLocalMongoose = require("passport-local-mongoose");　// 認証アクションを構築する前に読み込み必要
 
@@ -107,10 +107,11 @@ userSchema.pre('save', function(next) {
 };
  */
 // passport-local-mongoosepluginをスキーマに追加する
+// module.exports = mongoose.model('User', userSchema)の直前に設置必要
 // 参考：https://mongoosejs.com/docs/plugins.html
 // 参考：https://www.npmjs.com/package/passport-local-mongoose
 userSchema.plugin(passportLocalMongoose, {
-  usernameField: "email"
+  usernameField: "email" // Email属性が認証において、ログインのための有効なフィールドとして扱われる
 });
 
 module.exports = mongoose.model('User', userSchema)

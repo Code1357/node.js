@@ -47,14 +47,14 @@
 		</div>
 	</div>
 
-<%# フラッシュメッセージの表示区域 %> 
+<%# フラッシュメッセージの表示区域, フラッシュメッセを設定してれば、いつでもlayout.ejsで表示させれるようにしておく %> 
 	<div class="flashes">
-		<% if (flashMessages) { %>
-		<% if (flashMessages.success) { %>
+		<% if (flashMessages) { %> <%# ローカル変数.res.local.flashMessages %> 
+		<% if (flashMessages.success) { %> <%# 成功した場合 %> 
 		<div class="flash success">
 			<%= flashMessages.success %>
 		</div>
-		<% } else if (flashMessages.error) { %>
+		<% } else if (flashMessages.error) { %> <%# 失敗した場合 %> 
 		<div class="flash error">
 			<%= flashMessages.error %>
 		</div>

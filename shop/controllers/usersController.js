@@ -95,8 +95,8 @@ module.exports = {
 
   // ビューの表示は、redirectViewアクションで別に行う(createアクションから引き継ぐ)
   redirectView: (req, res, next) => { // 5.1
-    let redirectPath = res.locals.redirect;
-    if (redirectPath) res.redirect(redirectPath);
+    let redirectPath = res.locals.redirect; // ローカル変数をredirectPathへ代入(res.local.redirectは、経路によってそのパスはその時々によって違う)
+    if (redirectPath) res.redirect(redirectPath); // もしtrueだったらredirectPathへ転送
     else next();
   },
   show: (req, res, next) => {// 6
@@ -215,6 +215,7 @@ module.exports = {
       
   // passportのローカルストラテジーでユーザーを認証
   // 参考：http://www.passportjs.org/docs/other-api/
+  // passport.registerを直接参照する
   authenticate: passport.authenticate("local", { // authenticate(リクエストの認証をこれ一つで行う)
     failureRedirect: "/users/login", // 失敗時の転送
     failureFlash: "ログインに失敗しました.", // 失敗フラッシュメッセ
@@ -257,8 +258,12 @@ module.exports = {
       });
     }
   } */
-
-};
+logout: (req, res, next) => {
+  req.logout();
+  req.flash('success', 'ログアウトしました');
+  res.locals.redirect = '/';
+  next();
+ }};
 
 /* validator
 ・Sanitization middlewares
