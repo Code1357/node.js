@@ -6,6 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=1">
 	<title>web app</title>
 	<link rel="shortcut icon" type="image/png" href="/images/icon.png" />
+	<script type="text/javascript" src="/js/jquery.min.js"></script><%# 'courses/_coursesModal,モーダルに必要 %> 
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script><%# 'courses/_coursesModal,モーダルに必要 %>
+	<script type="text/javascript" src="/js/recipeApp.js"></script><%# 'courses/_coursesModal,モーダルに必要,上記2つのレイアウトのあとに挿入する必要あり %> 
 	<link rel="stylesheet" href="/css/bootstrap.css">
 	<link rel="stylesheet" href="/css/recipe_app.css">
 </head>
@@ -27,6 +30,8 @@
 			<a href="/contact">
 				<span class="button">Contact</span>
 			</a>
+			<%- include('courses/_coursesModal')%> <%# _ciursesModalのパーシャル,今回はbootstrapCDN,jQueryを使用している(必要な素材はjsフォルダの,bootstrap.min.js,jquery.min.js,モーダルのレイアウトは別styleで学習する必要あり)
+			モーダルにデータを与えるためにpublic/jsフォルダにrecipeAppjsが必要 %> 
 		</div> 
 		<%# ユーザーがログインしているか？ %> 
 		<div class="login-status">
