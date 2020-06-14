@@ -24,7 +24,11 @@ module.exports = {
       });
   },
   indexView: (req, res) => {
-    res.render("courses/index");
+    if (req.query.format === 'json') { // formatクエリパラメータがjsonと等しければ、,JSONでレスポンスする,参考：http://expressjs.com/en/5x/api.html#req.query(クエリパラメータを追加して、HTTPリクエストを判定しいている)
+      res.json(res.locals.courses); // http://localhost:3000/courses?format=json でアクセスするとjson形式で表示される
+    } else {
+      res.render("courses/index"); // それ以外は、EJSでレスポンスする(http://localhost:3000/coursesでアクセスすると表示)
+    }
   },
   new: (req, res) => {
     res.render("courses/new");
