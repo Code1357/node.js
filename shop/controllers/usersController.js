@@ -4,6 +4,7 @@ const User = require('../models/user');
 // const expressValidator = require('express-validator');
 // const { check, validationResult, body } = require('express-validator');
 const passport = require('passport'); // ログイン認証のためにuserControllerで必要
+const errorController = require('./errorController');
 
 
 const getUserParams = body => {
@@ -263,7 +264,16 @@ logout: (req, res, next) => {
   req.flash('success', 'ログアウトしました');
   res.locals.redirect = '/';
   next();
- }};
+ },
+// verifyTokenミドルウェア関数を作成]
+verifyToken: (req, res, next) => {
+const token = process.env.TOKEN || 'recipeT0k3n'; // process.envは、環境変数にしますよ。変数の箱の名前はTOKENですよ。それを、変数tokenに代入しますよ。該当がなければ、デフォルトでrecipeT0k3nにしますよ。
+    if(req.query.apiToken === token) next(); // トークンが一致したら次のミドルウェアを呼び出す(http://localhost:3000/api/courses?apiToken=recipeT0k3nで叩いたらデフォルトで一致するのでJSONを返す),apiTokenはクエリパラメーター。
+  else next(new Error('無効なAPIトークン')); // 一致しなければエラーを返す
+}
+
+};
+ 
 
 /* validator
 ・Sanitization middlewares

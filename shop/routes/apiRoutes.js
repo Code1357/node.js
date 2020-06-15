@@ -2,8 +2,10 @@
 
 const router = require("express").Router();
 const coursesController = require("../controllers/coursesController");
+const usersController = require("../controllers/usersController");
 
 // Express.jsのルータにAPI経路を追加
+router.use(usersController.verifyToken);
 router.get("/courses/:id/join", coursesController.join, coursesController.respondJSON)
 router.get(
   "/courses",

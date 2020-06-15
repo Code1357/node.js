@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 // オブジェクトの分割代入, 参照：https://mongoosejs.com/docs/guide.html
 const { Schema } = mongoose;
 const Subscriber = require('./subscriber');
+const randToken = require('rand-token');
 
 /* const { NETWORK_AUTHENTICATION_REQUIRED, REQUEST_URI_TOO_LONG } = require('http-status-codes');
  */
@@ -30,6 +31,9 @@ const userSchema = new Schema(
       required: true,
       lowercase: true,
       unique: true
+    },
+    apiToken: { // トークンのフィールド
+      type: String
     },
     zipCode: {
       type: Number,
@@ -81,7 +85,15 @@ userSchema.pre("save", function (next) {
     // ユーザーに既存の関連がれば次の関すを呼び出す
     next();
   }
-});
+},
+userSchema.pre('save', function(next) {
+  let user = this;
+  if(!user.apiToken)user.apiToken = randToken.generate(16); // もしapiTokenがfalseなら、ランダムで16文字のユニークなトークンを新たに生成する
+  next();
+})
+
+
+);
 
 /* // ユーザースキーマにpreフックを追加(ミドルウェア),　passportを使うために消す必要がある
 userSchema.pre('save', function(next) {

@@ -39,10 +39,13 @@ db.once('open', () => {
 
 // app.setを使う事でprocess.env.PORT || 3000を'port'へ代入している
 // 参考：https://nodejs.org/dist/latest-v14.x/docs/api/all.html#process_process_env ,参考：http://expressjs.com/en/5x/api.html#app.set
-app.set('port', process.env.PORT || 3000); // portへ代入
+app.set('port', process.env.PORT || 3000); // portへ代入(process.envはNodeの環境変数を取得している)
 
 // テンプレートエンジンejsを指定,参考：https://github.com/mde/ejs/wiki/Using-EJS-with-Express
 app.set('view engine', 'ejs');
+
+app.set('token', process.env.TOKEN || 'recipeT0k3n');// TOKEN:プロセスの環境変数(APIで監視するので、トークンapiフォルダのuserController.jsに記述),'recipeT0k3n'(ただの文字列でデフォルトで設定している),
+
 
 mongoose.set('useFindAndModify', false); // findOneAndUpdate()を使う時は、これをセット必須,セットしないと非推奨となる
 
