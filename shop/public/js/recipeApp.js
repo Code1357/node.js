@@ -1,19 +1,24 @@
 'use strict';
 
+// jQeryで記述されている
+
+// 最新コース(APIのボタン)
 $(document).ready(() => {
   $("#modal-button").click(() => {
     $(".modal-body").html("");
-    $.get("/api/courses", (results = {}) => { // 結果をresultsに代入する箱を準備
+    $.get("/api/courses", (results = {}) => { 
       let data = results.data; // データを表現するローカル変数を準備
       if (!data || !data.courses) return; // データオブジェクトがコースの情報を含んでいるかチェック
       data.courses.forEach(course => { // コースのデータのループ処理で要素をモーダルに追加
-        $(".modal-body").append(
+        $(".modal-body").append(　
+          // 状態によって適切なクラスを設定したボタンに変化を与える,三項演算子を使っている(参考：https://wa3.i-3-i.info/word11653.html)滅多に使う事はない
           `<div>
 						<span class="course-title">
 							${course.title}
 						</span>
-						<button class='button ${course.joined ? "joined-button" : "join-button"}' data-id="${course._id}">
-							${course.joined ? "Joined" : "Join"}
+            <button class='button ${course.joined ? "joined-button" : "join-button"}' data-id="${course._id}">
+          
+							${course.joined ? "Joined" : "参加"}
 						</button>
 						<div class="course-description">
 							${course.description}
@@ -21,25 +26,26 @@ $(document).ready(() => {
 					</div>`
         );
       });
-    }).then(() => {
+    }).then(() => { // 各ボタンに機能を持たせるためにプロミスでカスタム関数を呼び出す
       addJoinButtonListener();
     });
   });
 });
 
+// 参加ボタンの機能を作成(APIのボタン)
 let addJoinButtonListener = () => {
-  $(".join-button").click(event => {
-    let $button = $(event.target),
-      courseId = $button.data("id");
-    $.get(`/api/courses/${courseId}/join`, (results = {}) => {
+  $(".join-button").click(event => { // クリックイベント
+    let $button = $(event.target), // ターゲットのボタンを補足して(event.target:イベントを発生させたオブジェクトへの参照)
+      courseId = $button.data("id"); // ボタンのデータからコースIDを取得
+    $.get(`/api/courses/${courseId}/join`, (results = {}) => { // /api/courses/該当のid/joinというパス,参加したいコースIDをつけてAjaxリクエストを出す
       let data = results.data;
-      if (data && data.success) {
+      if (data && data.success) { // joinアクションの成功を確認してボタンを更新する
         $button
           .text("Joined")
           .addClass("joined-button")
           .removeClass("join-button");
       } else {
-        $button.text("Try again");
+        $button.text("登録できませんもう一度試してください");
       }
     });
   });
