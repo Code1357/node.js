@@ -103,10 +103,12 @@ app.use((req, res, next) => {
 app.use("/", router); // appの変わりにrouterを使えという命令
 
 // ポートの監視
-app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
   console.log(`localhost:${app.get('port')}を監視しています`);
 });
-
+// サーバーのインスタンスをsocket.ioに渡すs
+const io = require('socket.io')(server);
+require('./controllers/chatController')(io); // 必ずsocket.ioを読み込んだ後に記述(代入しないのは、読み込む以外で使用する事がないから)
 
 /*.use
 ・ミドルウェア関数をロードする（読み込む）

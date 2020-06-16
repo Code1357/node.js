@@ -1,7 +1,6 @@
 'use strict';
 
 const router = require("express").Router(); // ExpressとRouterを初期化
-
 // routesフォルダに拡散した経路をまとめる(経路の入り口を作る)
 const userRoutes = require("./userRoutes");
 const subscriberRoutes = require("./subscriberRoutes");
