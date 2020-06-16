@@ -32,9 +32,9 @@ const userSchema = new Schema(
       lowercase: true,
       unique: true
     },
-    apiToken: { // トークンのフィールド
+    /* apiToken: { // トークンのフィールド
       type: String
-    },
+    }, */
     zipCode: {
       type: Number,
       min: [10000, '桁数が足りません'],

@@ -6,15 +6,15 @@ const router = require("express").Router(); // ExpressとRouterを初期化
 const userRoutes = require("./userRoutes");
 const subscriberRoutes = require("./subscriberRoutes");
 const courseRoutes = require("./courseRoutes");
-const apiRoutes = require("./apiRoutes");
 const errorRoutes = require("./errorRoutes");
 const homeRoutes = require("./homeRoutes");
+const apiRoutes = require("./apiRoutes");
 
 //　関連する経路モジュールからの経路を、名前空間付きで使う(下記のこれらは、ミドルウェアとして動作する)
+router.use('/api',apiRoutes); // この経路はhomeRouteとerrorRoutesの経路よりも上に追加する必要がある。
 router.use("/users", userRoutes); // "/users"は名前空間
 router.use("/subscribers", subscriberRoutes);
 router.use("/courses", courseRoutes);
-router.use('/api',apiRoutes); // この経路はhomeRouteとerrorRoutesの経路よりも上に追加する必要がある。
 router.use("/", homeRoutes);
 router.use("/", errorRoutes);
 

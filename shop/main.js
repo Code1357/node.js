@@ -58,7 +58,7 @@ app.use(express.static('public')); // 静的ファイルの供給を可能にす
 // HTTPリクエストのバッファルトリームをエンコードする（urlエンコードの本体の解析）参考：http://expressjs.com/ja/api.html#express.urlencoded
 app.use(express.urlencoded({extended: false}));
 app.use(express.json()); // リクエストのJSON本体を解析する
-app.use(homeController.logRequestPaths); //自作ミドルウェア関数？？？
+// app.use(homeController.logRequestPaths); //自作ミドルウェア関数？？？
 
 app.use(cookieParser('secret_passcode')); // 選択した秘密のパスコードを使う。事と、expressに知らせている
 app.use(expressSession({ // passport群より先に設定が必要,セッションを使うようにExpressに設定

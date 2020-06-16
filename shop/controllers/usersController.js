@@ -6,7 +6,7 @@ const User = require('../models/user');
 const passport = require('passport'); // ログイン認証のためにuserControllerで必要
 const jsonWebToken = require('jsonwebtoken');
 
-const errorController = require('./errorController');
+// const errorController = require('./errorController');
 
 
 const getUserParams = body => {
@@ -35,11 +35,12 @@ module.exports = {
       });
   },
   indexView: (req, res) => { // 3.1(index.ejsを表示するだけ)
-    res.render('users/index', {
+    /* res.render('users/index', {
       flashMessages: {
         success: 'アカウントを作成したぜ！' // フラッシュメッセを設定できる
       }
-    });
+    }); */
+    res.render('users/index');
   },
   // フォームを表示させるアクション
   new: (req, res) => { // 4
@@ -114,7 +115,7 @@ module.exports = {
       })
       .catch(error => {
         //　エラーはロギングして次の関数に渡す
-        console.log(`Error fetching user by ID: ${error.message}`);
+        console.log(`Error ユーザーのID取得失敗: ${error.message}`);
         next(error);
       });
   },
@@ -314,7 +315,7 @@ module.exports = {
     let token = req.headers.token; // 最初に到着したトークン(JWT)をヘッドから取り出す
     if (token) { // トークンが存在したら
        // JWTを認証し、ペイロードをデコードする(元に戻す)
-      jsonWebToken.verify(token, "ひみつのエンコードパスフレーズだよ", (errors, payload) => {
+      jsonWebToken.verify(token, "secret_encoding_passphrase", (errors, payload) => {
         if (payload) {
           User.findById(payload.data).then(user => { // paylodeからデータを取り出して、一致するIDがあるかDBに問い合わせる
             if (user) { // 一致するものがあればnextへ
