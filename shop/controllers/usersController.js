@@ -4,6 +4,8 @@ const User = require('../models/user');
 // const expressValidator = require('express-validator');
 // const { check, validationResult, body } = require('express-validator');
 const passport = require('passport'); // ログイン認証のためにuserControllerで必要
+const jsonWebToken = require('jsonwebtoken');
+
 const errorController = require('./errorController');
 
 
@@ -265,12 +267,13 @@ module.exports = {
     res.locals.redirect = '/';
     next();
   },
-  // verifyTokenミドルウェア関数を作成]
-  verifyToken: (req, res, next) => {
-    /* const token = process.env.TOKEN || 'recipeT0k3n'; // process.envは、環境変数にしますよ。変数の箱の名前はTOKENですよ。それを、変数tokenに代入しますよ。該当がなければ、デフォルトでrecipeT0k3nにしますよ。
+  // verifyTokenミドルウェア関数を作成
+  /* verifyToken: (req, res, next) => {
+    const token = process.env.TOKEN || 'recipeT0k3n'; // process.envは、環境変数にしますよ。変数の箱の名前はTOKENですよ。それを、変数tokenに代入しますよ。該当がなければ、デフォルトでrecipeT0k3nにしますよ。
         if(req.query.apiToken === token) next(); // トークンが一致したら次のミドルウェアを呼び出す(http://localhost:3000/api/courses?apiToken=recipeT0k3nで叩いたらデフォルトで一致するのでJSONを返す),apiTokenはクエリパラメーター。
       else next(new Error('無効なAPIトークン')); // 一致しなければエラーを返す
     } */
+    /* verifyToken: (req, res, next) => {
     let token = req.query.apiToken;
     if (token) { // クエリパラメータにトークンが存在するか
       User.findOne({ apiToken: token }) // 提供されたAPIトークンを持つユーザーを探す機能
@@ -283,6 +286,59 @@ module.exports = {
         });
     } else {
       next(new Error('無効なAPIトークンですよ'));
+    }
+  } */
+  apiAuthenticate: (req, res, next) => {
+    passport.authenticate("local", (errors, user) => { // ユーザー認証をpassport.authenticateメソッドで行う
+      if (user) { // trueなら
+        let signedToken = jsonWebToken.sign( // メアドとパスの一致するユーザが居たらJWTに署名する(jsonWebTokenはJWTを読み出している)
+          {
+            data: user._id,// そのユーザーを使う
+            exp: new Date().setDate(new Date().getDate() + 1) // トークンの有効期限を定義(例は1日後)
+          },
+          "ひみつのエンコードパスフレーズ"
+        );
+        res.json({ // JWTでレスポンスする
+          success: true,
+          token: signedToken // この中に作成されたトークンが入る
+        });
+      } else
+        res.json({
+          success: false,
+          message: "ユーザーを認証できませんでした."
+        });
+    })(req, res, next);
+  },
+  // APIの認証アクションを作成
+  verifyJWT: (req, res, next) => {
+    let token = req.headers.token; // 最初に到着したトークン(JWT)をヘッドから取り出す
+    if (token) { // トークンが存在したら
+       // JWTを認証し、ペイロードをデコードする(元に戻す)
+      jsonWebToken.verify(token, "ひみつのエンコードパスフレーズだよ", (errors, payload) => {
+        if (payload) {
+          User.findById(payload.data).then(user => { // paylodeからデータを取り出して、一致するIDがあるかDBに問い合わせる
+            if (user) { // 一致するものがあればnextへ
+              next();
+            } else {
+              res.status(httpStatus.FORBIDDEN).json({ // なければerrorを返す403
+                error: true,
+                message: "ユーザーアカウントが見つかりません."
+              });
+            }
+          });
+        } else {
+          res.status(httpStatus.UNAUTHORIZED).json({　// トークンの認証に失敗したら,401
+            error: true,
+            message: "APIトークンを検証できません."
+          });
+          next();
+        }
+      });
+    } else {
+      res.status(httpStatus.UNAUTHORIZED).json({ // リクエストのヘッダにトークンが無かった時のエラー
+        error: true,
+        message: "トークンの提供"
+      });
     }
   }
 };
