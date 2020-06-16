@@ -34,7 +34,7 @@ module.exports = {
   },
   indexView: (req, res) => { // 3.1(index.ejsを表示するだけ)
     res.render('users/index', {
-      flashMessages: {　
+      flashMessages: {
         success: 'アカウントを作成したぜ！' // フラッシュメッセを設定できる
       }
     });
@@ -63,36 +63,36 @@ module.exports = {
     });
   },
 
-    /* let userParams = getUserParams(req.body);
-     {
-       name: {
-         first: req.body.first,　// .firstはejsで設定したname属性
-         last: req.body.last
-       },
-       email: req.body.email,
-       password: req.body.password,
-       zipCode: req.body.zipCode
-     };
+  /* let userParams = getUserParams(req.body);
+   {
+     name: {
+       first: req.body.first,　// .firstはejsで設定したname属性
+       last: req.body.last
+     },
+     email: req.body.email,
+     password: req.body.password,
+     zipCode: req.body.zipCode
+   };
 
-    // 上記変数createをUserモデルで受け取る
-    User.create(userParams) // Userモデル
-      .then(user => {
-        // 成功した事をフラッシュメッセージで知らせる
-        req.flash('success', `${user.fullName}のアカウントは無事に作成されました`);
-        res.locals.redirect = '/users'; // redirect:ページの転送
-        res.locals.user = user; // この行のコード???  // localsも???
-        next();
-      })
-      .catch(error => {
-        console.log(`Error ユーザの情報は保存できませんでした ${error.message}`);
-        res.locals.redirect = '/users/new'; // 失敗時の転送
-        // 失敗時のフラッシュメッセージ
-        req.flash(
-          'error', `ユーザーアカウントの作成に失敗しました${error.message}` //'error'(/*eroror-handler), ${error.message}は場面に応じた内容のerrorを返えしてくれる
-        );
-        next();
-      });
-  }, */
+  // 上記変数createをUserモデルで受け取る
+  User.create(userParams) // Userモデル
+    .then(user => {
+      // 成功した事をフラッシュメッセージで知らせる
+      req.flash('success', `${user.fullName}のアカウントは無事に作成されました`);
+      res.locals.redirect = '/users'; // redirect:ページの転送
+      res.locals.user = user; // この行のコード???  // localsも???
+      next();
+    })
+    .catch(error => {
+      console.log(`Error ユーザの情報は保存できませんでした ${error.message}`);
+      res.locals.redirect = '/users/new'; // 失敗時の転送
+      // 失敗時のフラッシュメッセージ
+      req.flash(
+        'error', `ユーザーアカウントの作成に失敗しました${error.message}` //'error'(/*eroror-handler), ${error.message}は場面に応じた内容のerrorを返えしてくれる
+      );
+      next();
+    });
+}, */
 
   // ビューの表示は、redirectViewアクションで別に行う(createアクションから引き継ぐ)
   redirectView: (req, res, next) => { // 5.1
@@ -213,7 +213,7 @@ module.exports = {
         next(error);
       }); */
 
-      
+
   // passportのローカルストラテジーでユーザーを認証
   // 参考：http://www.passportjs.org/docs/other-api/
   // passport.registerを直接参照する
@@ -259,21 +259,34 @@ module.exports = {
       });
     }
   } */
-logout: (req, res, next) => {
-  req.logout();
-  req.flash('success', 'ログアウトしました');
-  res.locals.redirect = '/';
-  next();
- },
-// verifyTokenミドルウェア関数を作成]
-verifyToken: (req, res, next) => {
-const token = process.env.TOKEN || 'recipeT0k3n'; // process.envは、環境変数にしますよ。変数の箱の名前はTOKENですよ。それを、変数tokenに代入しますよ。該当がなければ、デフォルトでrecipeT0k3nにしますよ。
-    if(req.query.apiToken === token) next(); // トークンが一致したら次のミドルウェアを呼び出す(http://localhost:3000/api/courses?apiToken=recipeT0k3nで叩いたらデフォルトで一致するのでJSONを返す),apiTokenはクエリパラメーター。
-  else next(new Error('無効なAPIトークン')); // 一致しなければエラーを返す
-}
-
+  logout: (req, res, next) => {
+    req.logout();
+    req.flash('success', 'ログアウトしました');
+    res.locals.redirect = '/';
+    next();
+  },
+  // verifyTokenミドルウェア関数を作成]
+  verifyToken: (req, res, next) => {
+    /* const token = process.env.TOKEN || 'recipeT0k3n'; // process.envは、環境変数にしますよ。変数の箱の名前はTOKENですよ。それを、変数tokenに代入しますよ。該当がなければ、デフォルトでrecipeT0k3nにしますよ。
+        if(req.query.apiToken === token) next(); // トークンが一致したら次のミドルウェアを呼び出す(http://localhost:3000/api/courses?apiToken=recipeT0k3nで叩いたらデフォルトで一致するのでJSONを返す),apiTokenはクエリパラメーター。
+      else next(new Error('無効なAPIトークン')); // 一致しなければエラーを返す
+    } */
+    let token = req.query.apiToken;
+    if (token) { // クエリパラメータにトークンが存在するか
+      User.findOne({ apiToken: token }) // 提供されたAPIトークンを持つユーザーを探す機能
+        .then(user => {
+          if (user) next(); // 該当userがtrueなら(判定する機能)
+          else next(new Error('無効なAPIトークンです'))
+        })
+        .catch(error => { // 該当userがfalseなら(判定する機能)
+          next(new Error(error.message));
+        });
+    } else {
+      next(new Error('無効なAPIトークンですよ'));
+    }
+  }
 };
- 
+
 
 /* validator
 ・Sanitization middlewares
