@@ -3,6 +3,24 @@
 // jQeryで記述されている
 
 $(document).ready(() => {
+const socket = io(); // クライアントサイドでsocket.ioを初期化
+
+// フォームが送出された時にイベントを発行
+$("#chatForm").submit(() => {
+  socket.emit("message");
+  $("#chat-input").val("");
+  return false;
+});
+// イベントを監視し、チャットボックスに記入
+socket.on("message", message => {
+  displayMessage(message.content); // contentプロパティは、chatController.jsのcontentで設定
+});
+// サーバー川から受信したメッセージをチャットボックスに表示
+let displayMessage = message => {
+  $("#chat").prepend($("<li>").html(message));
+};
+
+
   $("#modal-button").click(() => {
     $(".modal-body").html("");
     $.get("/api/courses?apiToken=recipeT0k3n", (results = {}) => {

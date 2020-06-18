@@ -1,8 +1,6 @@
 // ここからチャットのsocket接続を管理する
 'use strict';
 
-const { on } = require("../models/user");
-const nodemon = require("nodemon");
 
 // ソケットを接続するための処理
 module.exports = io => {
@@ -14,8 +12,8 @@ client.on('disconnect', () => { // ユーザーの切断を監視,disconnect(nod
 });
 
 client.on("message", () => { // 作成されるメッセージのイベントを監視, messeage(node.js)イベント,もしmessage受信したら
-  io.emit("message", { // emit
-    content: "Hello"
+  io.emit("message", { // emitメソッドで任意のテキストを接続している全部のクライアントに送信する
+    content: "Hello" // content,recipeApp.jsで設定
   });
 });
 });
