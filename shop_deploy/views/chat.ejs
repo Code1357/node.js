@@ -1,0 +1,17 @@
+<%# もし、ログイン中のユーザーなら %> 
+<% if (currentUser) {%> 
+<h1>Chat</h1>
+<%# チャット入力用のHTMLのフォーム %>
+<form id="chatForm">
+<%# 入力フォーム %> 
+  <input id="chat-input" type="text">
+  <%# ユーザーデータを含むhiddenフィールドを追加する,hidden(非表示データ、HTMLソースを見ればバレる) %>
+  <input type="hidden" id="chat-user-name" value="<%= currentUser.fullName %>"> 
+  <input type="hidden" id="chat-user-id" value="<%= currentUser._id %>"> 
+  <%# 送信ボタン %> 
+  <input type="submit" class="button" value="送信">
+</form>
+
+<%# チャットボックス用にタグを作る %>
+<div id="chat"></div>
+<% } %>

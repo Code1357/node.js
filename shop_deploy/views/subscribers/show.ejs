@@ -1,0 +1,44 @@
+<h1 class="center">購読者のためのページ
+  <%= subscriber.name %>
+</h1>
+
+<table class="table">
+  <tr>
+    <th>Name</th>
+    <td>
+      <%= subscriber.name %>
+    </td>
+  </tr>
+  <tr>
+    <th>Email</th>
+    <td>
+      <%= subscriber.email%>
+    </td>
+  </tr>
+  <tr>
+    <th>Zip Code</th>
+    <td>
+      <%= subscriber.zipCode%>
+    </td>
+  </tr>
+</table>
+
+<p>この購読者の関連しているコース
+  <%= subscriber.courses.length %> associated course(s) <%# 関連づけたページの表示 %> 
+</p>
+
+
+<div>
+  <a class="button" href="/subscribers">購読者の全てを確認</a>
+</div>
+<div>
+  <a class="button" href="<%=`/subscribers/${subscriber._id}/edit`%>">
+    購読者の詳細を編集する
+  </a>
+</div>
+<div>
+  <a class="button" href="<%= `/subscribers/${subscriber._id}/delete?_method=DELETE` %>" onclick="return confirm('ほんとにほんとに、このレコードを削除して良いの？')">削除ボタン</a>
+</div>
+<div>
+  <a class="button" href="/subscribers">すべての購読者を確認</a>
+</div>
