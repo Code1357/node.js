@@ -1,0 +1,2 @@
+# gitにnode_modulesを含まない(アプリのルートディレクトリに廃止する必要あり)
+/node_modules

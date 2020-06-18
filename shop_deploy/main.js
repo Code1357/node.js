@@ -23,9 +23,14 @@ const User = require("./models/user");
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
 // mongooseでMongoDBに接続,参考：https://mongoosejs.com,参考：https://mongoosejs.com/docs/connections.html
-mongoose.connect('mongodb://localhost:27017/recipe_db',
+/* mongoose.connect('mongodb://localhost:27017/recipe_db',
   { useNewUrlParser: true, useUnifiedTopology: true }
-);
+); */
+// heroku用に上記を変更
+mongoose.connect(
+  process.env.MONGODB_URI || "mongodb://localhost:27017/recipe_db",
+  { useNewUrlParser: true, useFindAndModify: false }
+); // *heroku*
 
 // (node:2210)非推奨の警告を避ける事ができる,参考：https://mongoosejs.com/docs/connections.html
 mongoose.set("useCreateIndex", true);
@@ -39,7 +44,7 @@ db.once('open', () => {
 
 // app.setを使う事でprocess.env.PORT || 3000を'port'へ代入している
 // 参考：https://nodejs.org/dist/latest-v14.x/docs/api/all.html#process_process_env ,参考：http://expressjs.com/en/5x/api.html#app.set
-app.set('port', process.env.PORT || 3000); // portへ代入(process.envはNodeの環境変数を取得している)
+app.set('port', process.env.PORT || 3000); // portへ代入(process.envはNodeの環境変数を取得している) *herok*
 
 // テンプレートエンジンejsを指定,参考：https://github.com/mde/ejs/wiki/Using-EJS-with-Express
 app.set('view engine', 'ejs');
@@ -105,7 +110,7 @@ app.use("/", router); // appの変わりにrouterを使えという命令
 // ポートの監視
 const server = app.listen(app.get('port'), () => {
   console.log(`localhost:${app.get('port')}を監視しています`);
-});
+}); // *heroku*
 // サーバーのインスタンスをsocket.ioに渡すs
 const io = require('socket.io')(server);
 const chatController = require('./controllers/chatController')(io); // 必ずsocket.ioを読み込んだ後に記述(代入しないのは、読み込む以外で使用する事がないから)
