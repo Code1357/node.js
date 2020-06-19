@@ -1,8 +1,7 @@
-"use strict";
+'use strict';
 
-const Course = require("../models/course");
-const httpStatus = require("http-status-codes"); // API、JSONレスポンスのstatusに必要
-const user = require("../models/user");
+const Course = require('../models/course');
+const httpStatus = require('http-status-codes'); // API、JSONレスポンスのstatusに必要
 const User = require('../models/user');
 
 const getCourseParams = body => {
@@ -35,14 +34,14 @@ module.exports = {
     res.render('courses/index');
   },
   new: (req, res) => {
-    res.render("courses/new");
+    res.render('courses/new');
   },
 
   create: (req, res, next) => {
-    let courseParams = getCourseParams(req.body);
+    const courseParams = getCourseParams(req.body);
     Course.create(courseParams)
       .then(course => {
-        res.locals.redirect = "/courses";
+        res.locals.redirect = '/courses';
         res.locals.course = course;
         next();
       })
@@ -53,7 +52,7 @@ module.exports = {
   },
 
   show: (req, res, next) => {
-    let courseId = req.params.id;
+    const courseId = req.params.id;
     Course.findById(courseId)
       .then(course => {
         res.locals.course = course;
@@ -66,14 +65,14 @@ module.exports = {
   },
 
   showView: (req, res) => {
-    res.render("courses/show");
+    res.render('courses/show');
   },
 
   edit: (req, res, next) => {
-    let courseId = req.params.id;
+    const courseId = req.params.id;
     Course.findById(courseId)
       .then(course => {
-        res.render("courses/edit", {
+        res.render('courses/edit', {
           course: course
         });
       })
@@ -84,8 +83,8 @@ module.exports = {
   },
 
   update: (req, res, next) => {
-    let courseId = req.params.id;
-    let courseParams = getCourseParams(req.body);
+    const courseId = req.params.id;
+    const courseParams = getCourseParams(req.body);
     Course.findByIdAndUpdate(courseId, {
       $set: courseParams
     })
@@ -101,10 +100,10 @@ module.exports = {
   },
 
   delete: (req, res, next) => {
-    let courseId = req.params.id;
+    const courseId = req.params.id;
     Course.findByIdAndRemove(courseId)
       .then(() => {
-        res.locals.redirect = "/courses";
+        res.locals.redirect = '/courses';
         next();
       })
       .catch(error => {
@@ -114,7 +113,7 @@ module.exports = {
   },
 
   redirectView: (req, res, next) => {
-    let redirectPath = res.locals.redirect;
+    const redirectPath = res.locals.redirect;
     if (redirectPath !== undefined) res.redirect(redirectPath);
     else next();
   },
@@ -122,7 +121,7 @@ module.exports = {
   // 前のミドルウェア(index)からのリクエストを処理してレスポンスを返す
   respondJSON: (req, res) => {
     res.json({ // JSON形式でレスポンスを送信する(参考：http://expressjs.com/en/5x/api.html#res.json)
-      status: httpStatus.OK,　// http-status-codesを使用
+      status: httpStatus.OK, // http-status-codesを使用
       data: res.locals
     });
   },
@@ -136,7 +135,7 @@ module.exports = {
     } else {
       errorObject = {
         status: httpStatus.INTERNAL_SERVER_ERROR,
-        message: "Unknown Error."
+        message: 'Unknown Error.'
       };
     }
     res.json(errorObject); // 該当するエラーをJSON形式でレスポンス
@@ -144,8 +143,8 @@ module.exports = {
 
   // ユーザーをコースに参加させるjoinアクション
   join: (req, res, next) => {
-    let courseId = req.params.id; // コースIDの取得
-    let currentUser = req.user; // userIDの取得
+    const courseId = req.params.id; // コースIDの取得
+    const currentUser = req.user; // userIDの取得
     // 現在のユーザーがログインしているかチェック
     if (currentUser) {
       User.findByIdAndUpdate(currentUser, { // findByIdAndUpdate：mongooseのメソッド(更新コマンドを発行)
@@ -161,14 +160,15 @@ module.exports = {
           next(error);
         });
     } else {
-      next(new Error("ログインする必要があります")); // そもそもログインしてなくてエラーであれば
+      next(new Error('ログインする必要があります')); // そもそもログインしてなくてエラーであれば
     }
-     // コースをフィルタリングするアクション
-  }, filterUserCourses: (req, res, next) => {
-    let currentUser = res.locals.currentUser;
+    // コースをフィルタリングするアクション
+  },
+  filterUserCourses: (req, res, next) => {
+    const currentUser = res.locals.currentUser;
     if (currentUser) { // ユーザーのログインチェック,trueなら
-      let mappedCourses = res.locals.courses.map(course => { // map(js)を使って、ユーザーのcourses配列に、そのコースが存在するかチェックする
-        let userJoined = currentUser.courses.some(userCourse => { // マッチがあったがどうかを示すブール値を返す(currentUser.coursesにコースIDがあるはず),some(js)
+      const mappedCourses = res.locals.courses.map(course => { // map(js)を使って、ユーザーのcourses配列に、そのコースが存在するかチェックする
+        const userJoined = currentUser.courses.some(userCourse => { // マッチがあったがどうかを示すブール値を返す(currentUser.coursesにコースIDがあるはず),some(js)
           return userCourse.equals(course._id);// equals(mongoose),ドキュメントを比較し、戻り値はブール値で返す。
         });
         return Object.assign(course.toObject(), { joined: userJoined }); // Object.assign(js),toObject()(mongoose),プレーンなjavascriptオブジェクトに変換し、MongoDBに保存できるようにする
@@ -179,5 +179,4 @@ module.exports = {
       next();
     }
   }
-
-}
+};

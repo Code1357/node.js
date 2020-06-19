@@ -8,7 +8,6 @@ const jsonWebToken = require('jsonwebtoken');
 
 // const errorController = require('./errorController');
 
-
 const getUserParams = body => {
   return {
     name: {
@@ -69,7 +68,7 @@ module.exports = {
   /* let userParams = getUserParams(req.body);
    {
      name: {
-       first: req.body.first,　// .firstはejsで設定したname属性
+       first: req.body.first, // .firstはejsで設定したname属性
        last: req.body.last
      },
      email: req.body.email,

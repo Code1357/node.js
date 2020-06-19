@@ -12,6 +12,6 @@ module.exports = {
     next();
   },
   chat: (req, res) => {
-    res.render('chat');//chat.ejsを表示
+    res.render('chat'); // chat.ejsを表示
   }
 };
