@@ -101,10 +101,7 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 // router.post('/subscribe', subscribersController.saveSubscriber);
-
 
 app.use("/", router); // appの変わりにrouterを使えという命令
 
@@ -122,3 +119,4 @@ const chatController = require('./controllers/chatController')(io); // 必ずsoc
 ・レスポンスがサーバーから出ていく時にも発動する
 ・参考：http://expressjs.com/ja/guide/writing-middleware.html#writing-middleware-for-use-in-express-apps
 */
+
