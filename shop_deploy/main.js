@@ -1,11 +1,11 @@
 'use strict';
 
 const express = require('express'); // express呼び出し
-const app = express();
+const app = express(); // express初期化
 const router = require("./routes/index"); // routesの入り口に繋がるパスを読み込む(const router = express.Router();は、routesで別々に設定しているので不要 // .Router初期化,必ず一番下にapp.use("/", router);が必要)
 const layouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
-const errorController = require("./controllers/errorController");
+const errorController = require("./controllers/errorController")
 const homeController = require('./controllers/homeController');
 const subscribersController = require('./controllers/subscribersController');
 const usersController = require("./controllers/usersController");
@@ -17,9 +17,9 @@ const cookieParser = require('cookie-parser');
 const connectFlash = require("connect-flash");
 
 const passport = require("passport"); // passoport読み込み
-const morgan = require('morgan'); // デバッグツール
-
 const User = require("./models/user");
+
+
 // 不要：mongoose.Promise = global.Promise; // jsプロミスを使う為に必要
 
 // mongooseでMongoDBに接続,参考：https://mongoosejs.com,参考：https://mongoosejs.com/docs/connections.html
@@ -29,7 +29,7 @@ const User = require("./models/user");
 // heroku用に上記を変更
 mongoose.connect(
   process.env.MONGODB_URI || "mongodb://localhost:27017/recipe_db",
-  { useNewUrlParser: true, useUnifiedTopology: true }
+  { useNewUrlParser: true, useFindAndModify: false }
 ); // *heroku*
 
 // (node:2210)非推奨の警告を避ける事ができる,参考：https://mongoosejs.com/docs/connections.html
@@ -51,7 +51,6 @@ app.set('view engine', 'ejs');
 
 app.set('token', process.env.TOKEN || 'recipeT0k3n');// TOKEN:プロセスの環境変数(APIで監視するので、トークンapiフォルダのuserController.jsに記述),'recipeT0k3n'(ただの文字列でデフォルトで設定している),
 
-app.use(morgan('combined'));
 
 mongoose.set('useFindAndModify', false); // findOneAndUpdate()を使う時は、これをセット必須,セットしないと非推奨となる
 
@@ -101,7 +100,10 @@ app.use((req, res, next) => {
   next();
 });
 
+
+
 // router.post('/subscribe', subscribersController.saveSubscriber);
+
 
 app.use("/", router); // appの変わりにrouterを使えという命令
 
@@ -119,4 +121,3 @@ const chatController = require('./controllers/chatController')(io); // 必ずsoc
 ・レスポンスがサーバーから出ていく時にも発動する
 ・参考：http://expressjs.com/ja/guide/writing-middleware.html#writing-middleware-for-use-in-express-apps
 */
-
